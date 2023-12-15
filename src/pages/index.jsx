@@ -211,9 +211,8 @@ export default function Home({ articles }) {
           </h1>
           <p className="mt-6 text-base text-zinc-600 dark:text-zinc-400">
             Hey, I’m Mitch, a software engineer based in Austin.
-            I work at
-            <Link href={'http://www.vercel.com'} target='_blank'>▲ Vercel</Link>
-            , helping to build out <Link href={'http://turbo.build/repo'} target='_blank'>Turborepo.</Link>
+            I work at <Link className='underline underline-offset-4' href={'http://www.vercel.com'} target='_blank'>▲ Vercel</Link>
+            , helping to build out <Link className='underline underline-offset-4' href={'http://turbo.build/repo'} target='_blank'>Turborepo.</Link>
           </p>
           <div className="flex gap-6 mt-6">
             <SocialLink
