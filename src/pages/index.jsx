@@ -210,8 +210,7 @@ export default function Home({ articles }) {
             Software engineer, professional Top Golf Angry Birds golfer.
           </h1>
           <p className="mt-6 text-base text-zinc-600 dark:text-zinc-400">
-            Hey, I’m Mitch, a software engineer based in Austin. I work at Vercel, developing an internal deployment platform
-            to help us release software that makes the internet a better place, in a quicker and more stable fashion.
+            Hey, I’m Mitch, a software engineer based in Austin. I work at Vercel, helping to build out Turborepo.
           </p>
           <div className="flex gap-6 mt-6">
             <SocialLink
