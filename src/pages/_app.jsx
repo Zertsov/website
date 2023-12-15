@@ -32,7 +32,7 @@ export default function App({ Component, pageProps, router }) {
         <Header />
         <main>
           <Component previousPathname={previousPathname} {...pageProps} />
-          <SpeedInsights />
+          {/* <SpeedInsights /> */}
         </main>
         <Footer />
       </div>
