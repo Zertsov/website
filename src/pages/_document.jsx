@@ -39,6 +39,7 @@ export default function Document() {
   return (
     <Html className="h-full antialiased" lang="en">
       <Head>
+        {/* biome-ignore lint/security/noDangerouslySetInnerHtml: Too lazy, we set the stuff above. */}
         <script dangerouslySetInnerHTML={{ __html: modeScript }} />
       </Head>
       <body className="flex h-full flex-col bg-zinc-50 dark:bg-black">

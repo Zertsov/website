@@ -16,9 +16,9 @@ function SocialLink({ className, href, children, icon: Icon }) {
     <li className={clsx(className, 'flex')}>
       <Link
         href={href}
-        className="group flex text-sm font-medium text-zinc-800 transition hover:text-teal-500 dark:text-zinc-200 dark:hover:text-teal-500"
+        className="flex text-sm font-medium transition group text-zinc-800 hover:text-teal-500 dark:text-zinc-200 dark:hover:text-teal-500"
       >
-        <Icon className="h-6 w-6 flex-none fill-zinc-500 transition group-hover:fill-teal-500" />
+        <Icon className="flex-none w-6 h-6 transition fill-zinc-500 group-hover:fill-teal-500" />
         <span className="ml-4">{children}</span>
       </Link>
     </li>
@@ -37,13 +37,14 @@ function MailIcon(props) {
 }
 
 export default function About() {
+  const work = "Vercel "
   return (
     <>
       <Head>
         <title>About - Mitch Vostrez</title>
         <meta
           name="description"
-          content="I’m Mitch Vostrez, a software engineer at Cloudflare."
+          content="I’m Mitch Vostrez, a software engineer at Vercel."
         />
       </Head>
       <Container className="mt-16 sm:mt-32">
@@ -54,7 +55,7 @@ export default function About() {
                 src={portraitImage}
                 alt=""
                 sizes="(min-width: 1024px) 32rem, 20rem"
-                className="aspect-square rotate-3 rounded-2xl bg-zinc-100 object-cover dark:bg-zinc-800"
+                className="object-cover aspect-square rotate-3 rounded-2xl bg-zinc-100 dark:bg-zinc-800"
               />
             </div>
           </div>
@@ -62,7 +63,7 @@ export default function About() {
             <h1 className="text-4xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100 sm:text-5xl">
               Hey, I&apos;m Mitch.
             </h1>
-            <div className="mt-6 space-y-7 text-base text-zinc-600 dark:text-zinc-400">
+            <div className="mt-6 text-base space-y-7 text-zinc-600 dark:text-zinc-400">
               <p>
                 I&apos;ve been getting in trouble with computers since I was a kid, from breaking my dad&apos;s
                 old Gateway tower at the office trying to play my Power Rangers CD when I was 5 to causing scheduled
@@ -71,14 +72,14 @@ export default function About() {
               <p>
                 I&apos;ve spent my career primarily writing Go services and tooling related to infrastructure, security, and reliability.
                 I worked at a couple of large businesses (Target and Visa), learning how to not only build services and tools, but how to
-                build them in a way that scales to the needs of businesses that size. I&apos;m now using those same skills to help Cloudflare
-                mature their deployment platform and teaching others ways to write good, maintainable Go code.
+                build them in a way that scales to the needs of businesses that size. I&apos;m now using those same skills to help {work}
+                build out Turborepo.
               </p>
               {/* Add more p tags here */}
             </div>
           </div>
           <div className="lg:pl-20">
-            <ul role="list">
+            <ul>
               <SocialLink href="https://twitter.com/VozMajal" icon={TwitterIcon}>
                 Follow on Twitter
               </SocialLink>
@@ -91,7 +92,7 @@ export default function About() {
               <SocialLink
                 href="mailto:mitch@voz.dev"
                 icon={MailIcon}
-                className="mt-8 border-t border-zinc-100 pt-8 dark:border-zinc-700/40"
+                className="pt-8 mt-8 border-t border-zinc-100 dark:border-zinc-700/40"
               >
                 mitch@voz.dev
               </SocialLink>
