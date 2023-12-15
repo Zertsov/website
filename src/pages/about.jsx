@@ -36,8 +36,59 @@ function MailIcon(props) {
   )
 }
 
+function Introduction() {
+  const work = 'Vercel' 
+  const project = 'Turborepo'
+
+  return (
+    <div className="lg:order-first lg:row-span-2">
+      <h1 className="text-4xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100 sm:text-5xl">
+        Hey, I&apos;m Mitch.
+      </h1>
+      <div className="mt-6 text-base space-y-7 text-zinc-600 dark:text-zinc-400">
+        <p>
+          I&apos;ve been getting in trouble with computers since I was a kid, from breaking my dad&apos;s
+          old Gateway tower at the office trying to play my Power Rangers CD when I was 5, to causing scheduled
+          shutdowns of computers throughout my high school network to give my friends extra time to study for exams.
+        </p>
+        <p>
+          I&apos;ve spent my career primarily writing Go services and tooling related to infrastructure, security, and reliability.
+          I worked at a couple of large businesses (Target, Visa, and Cloudflare), not only learning how to build services and tools, but how to
+          build them in a way that <span className='italic'>scales</span> to the needs of businesses that size. I&apos;m now using those same skills to help {work + ' '}
+          build out {' ' + project}.
+        </p>
+        {/* Add more p tags here */}
+      </div>
+    </div>
+  )
+}
+
+function SocialLinks() {
+  return (
+    <div className="lg:pl-20">
+      <ul>
+        <SocialLink href="https://twitter.com/VozMajal" icon={TwitterIcon}>
+          Follow on Twitter
+        </SocialLink>
+        <SocialLink href="https://github.com/Zertsov" icon={GitHubIcon} className="mt-4">
+          Follow on GitHub
+        </SocialLink>
+        <SocialLink href="https://www.linkedin.com/in/mitch-vostrez/" icon={LinkedInIcon} className="mt-4">
+          Follow on LinkedIn
+        </SocialLink>
+        <SocialLink
+          href="mailto:mitch@voz.dev"
+          icon={MailIcon}
+          className="pt-8 mt-8 border-t border-zinc-100 dark:border-zinc-700/40"
+        >
+          mitch@voz.dev
+        </SocialLink>
+      </ul>
+    </div>
+  )
+}
+
 export default function About() {
-  const work = "Vercel "
   return (
     <>
       <Head>
@@ -59,45 +110,8 @@ export default function About() {
               />
             </div>
           </div>
-          <div className="lg:order-first lg:row-span-2">
-            <h1 className="text-4xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100 sm:text-5xl">
-              Hey, I&apos;m Mitch.
-            </h1>
-            <div className="mt-6 text-base space-y-7 text-zinc-600 dark:text-zinc-400">
-              <p>
-                I&apos;ve been getting in trouble with computers since I was a kid, from breaking my dad&apos;s
-                old Gateway tower at the office trying to play my Power Rangers CD when I was 5 to causing scheduled
-                shutdowns of computers throughout my high school network to give my friends extra time to study for exams.
-              </p>
-              <p>
-                I&apos;ve spent my career primarily writing Go services and tooling related to infrastructure, security, and reliability.
-                I worked at a couple of large businesses (Target and Visa), learning how to not only build services and tools, but how to
-                build them in a way that scales to the needs of businesses that size. I&apos;m now using those same skills to help {work}
-                build out Turborepo.
-              </p>
-              {/* Add more p tags here */}
-            </div>
-          </div>
-          <div className="lg:pl-20">
-            <ul>
-              <SocialLink href="https://twitter.com/VozMajal" icon={TwitterIcon}>
-                Follow on Twitter
-              </SocialLink>
-              <SocialLink href="https://github.com/Zertsov" icon={GitHubIcon} className="mt-4">
-                Follow on GitHub
-              </SocialLink>
-              <SocialLink href="https://www.linkedin.com/in/mitch-vostrez/" icon={LinkedInIcon} className="mt-4">
-                Follow on LinkedIn
-              </SocialLink>
-              <SocialLink
-                href="mailto:mitch@voz.dev"
-                icon={MailIcon}
-                className="pt-8 mt-8 border-t border-zinc-100 dark:border-zinc-700/40"
-              >
-                mitch@voz.dev
-              </SocialLink>
-            </ul>
-          </div>
+          <Introduction />
+          <SocialLinks />
         </div>
       </Container>
     </>
