@@ -67,9 +67,9 @@ function SocialLinks() {
   return (
     <div className="lg:pl-20">
       <ul>
-        <SocialLink href="https://twitter.com/VozMajal" icon={TwitterIcon}>
+        {/* <SocialLink href="https://twitter.com/VozMajal" icon={TwitterIcon}>
           Follow on Twitter
-        </SocialLink>
+        </SocialLink> */}
         <SocialLink href="https://github.com/Zertsov" icon={GitHubIcon} className="mt-4">
           Follow on GitHub
         </SocialLink>
