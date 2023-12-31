@@ -193,7 +193,7 @@ export default function Home({ articles }) {
     <>
       <Head>
         <title>
-          Mitch Vostrez - Software engineer, professional Top Golf Angry Birds golfer.
+          Mitch Vostrez - Software engineer.
         </title>
         <meta
           name="description"
