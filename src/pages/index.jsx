@@ -201,7 +201,7 @@ export default function Home({ articles }) {
         </title>
         <meta
           name="description"
-          content="I’m Mitch, a software engineer based in Austin. A worldwide traveler and Chiefs fan, just trying to make cool and fun software at Vercel."
+          content="I’m Mitch, a software engineer based in Austin. A worldwide traveler and Chiefs fan, just making cool and fun software at Vercel."
         />
       </Head>
       <Container className="mt-9">
