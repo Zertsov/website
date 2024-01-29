@@ -182,9 +182,9 @@ function ModeToggle() {
   function toggleMode() {
     disableTransitionsTemporarily()
 
-    let darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-    let isSystemDarkMode = darkModeMediaQuery.matches
-    let isDarkMode = document.documentElement.classList.toggle('dark')
+    const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+    const isSystemDarkMode = darkModeMediaQuery.matches
+    const isDarkMode = document.documentElement.classList.toggle('dark')
 
     if (isDarkMode === isSystemDarkMode) {
       delete window.localStorage.isDarkMode
@@ -207,8 +207,8 @@ function ModeToggle() {
 }
 
 function clamp(number, a, b) {
-  let min = Math.min(a, b)
-  let max = Math.max(a, b)
+  const min = Math.min(a, b)
+  const max = Math.max(a, b)
   return Math.min(Math.max(number, min), max)
 }
 
