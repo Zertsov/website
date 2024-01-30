@@ -190,7 +190,7 @@ function ModeToggle() {
     const isDarkMode = document.documentElement.classList.toggle('dark')
 
     if (isDarkMode === isSystemDarkMode) {
-      delete window.localStorage.isDarkMode
+      window.localStorage.isDarkMode = undefined
     } else {
       window.localStorage.isDarkMode = isDarkMode
     }
