@@ -28,6 +28,7 @@ function SocialLink({ className, href, children, icon: Icon }) {
 function MailIcon(props) {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" {...props}>
+      <title>Mail icon</title>
       <path
         fillRule="evenodd"
         d="M6 5a3 3 0 0 0-3 3v8a3 3 0 0 0 3 3h12a3 3 0 0 0 3-3V8a3 3 0 0 0-3-3H6Zm.245 2.187a.75.75 0 0 0-.99 1.126l6.25 5.5a.75.75 0 0 0 .99 0l6.25-5.5a.75.75 0 0 0-.99-1.126L12 12.251 6.245 7.187Z"
@@ -54,8 +55,11 @@ function Introduction() {
         <p>
           I&apos;ve spent my career primarily writing Go services and tooling related to infrastructure, security, and reliability.
           I worked at a couple of large businesses (Target, Visa, and Cloudflare), not only learning how to build services and tools, but how to
-          build them in a way that <span className='italic'>scales</span> to the needs of businesses that size. I&apos;m now using those same skills to help {work + ' '}
+          build them in a way that <span className='italic'>scales</span> to the needs of businesses that size. I&apos;m now using those same skills to help {`${work} `}
           build out {' ' + project}.
+        </p>
+        <p>
+          I mostly use this site as a way for me to test things I do at Vercel, so if you see broken stuff, pretend it&apos;s on purpose.
         </p>
         {/* Add more p tags here */}
       </div>
