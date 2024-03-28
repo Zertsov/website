@@ -63,7 +63,7 @@ export default function Uses() {
             </Tool>
             <Tool title="Arc Browser">
               I tend to have issues with very distracting tools, so the ability to minimize noise in my browser
-              is a huge feature I didn&apos;t know I wanted until I started using Arc.
+              is a huge feature I didn&apos;t know I needed until I started using Arc.
             </Tool>
           </ToolsSection>
         </div>
