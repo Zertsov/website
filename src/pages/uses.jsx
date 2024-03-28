@@ -61,6 +61,10 @@ export default function Uses() {
               I don&apos;t remember the reason I started using this but it&apos;s been my main
               terminal emulator since college.
             </Tool>
+            <Tool title="Arc Browser">
+              I tend to have issues with very distracting tools, so the ability to minimize noise in my browser
+              is a huge feature I didn&apos;t know I wanted until I started using Arc.
+            </Tool>
           </ToolsSection>
         </div>
       </SimpleLayout>
