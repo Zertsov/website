@@ -59,7 +59,7 @@ function Introduction() {
           build out {' ' + project}.
         </p>
         <p>
-          I mostly use this site as a way for me to test things I do at Vercel, so if you see broken stuff, assume it&apos;s on purpose.
+          I mostly use this as a way for me to test things I do at Vercel, so if you see broken stuff, assume it&apos;s on purpose.
         </p>
         {/* Add more p tags here */}
       </div>
