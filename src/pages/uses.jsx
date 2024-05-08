@@ -42,7 +42,7 @@ export default function Uses() {
         <div className="space-y-20">
           <ToolsSection title="Workstation">
             <Tool title="16” MacBook Pro, M1 Max, 32GB RAM (2021)">
-              I&apos;ve always used a Mac for work, and my current work machine is no exception.
+              I&apos;ve always used a Macbook for work, and my current work machine is no exception.
             </Tool>
             <Tool title="Apple Magic Trackpad">
               Almost everything Apple makes has great quality, with the exception of Magic Mouse.
