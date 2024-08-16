@@ -36,7 +36,7 @@ export default function Uses() {
         />
       </Head>
       <SimpleLayout
-        title="Software and hardware I like and use."
+        title="Stuff I use."
         intro=""
       >
         <div className="space-y-20">
