@@ -12,7 +12,7 @@ import {
 import portraitImage from '@/images/photos/bucket.jpg'
 
 function showTesting() {
-  return process.env.CUSTOM_ENVIRONMENT_TESTING === 1
+  return process.env.NEXT_PUBLIC_CUSTOM_ENV_TESTING === 1 || process.env.NEXT_PUBLIC_CUSTOM_ENV_TESTING === '1'
 }
 
 function SocialLink({ className, href, children, icon: Icon }) {
