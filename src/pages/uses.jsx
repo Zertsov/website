@@ -58,6 +58,10 @@ export default function Uses() {
 
               Plus, having vim bindings in my nice editor makes me feel smart.
             </Tool>
+            <Tool title="Cursor">
+              Hard to ignore AI tooling nowadays, and using Cursor keeps me up to date on how AI helpers
+              are evolving day after day.
+            </Tool>
             <Tool title="iTerm2">
               I don&apos;t remember the reason I started using this but it&apos;s been my main
               terminal emulator since college.
