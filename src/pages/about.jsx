@@ -11,10 +11,6 @@ import {
 } from '@/components/SocialIcons'
 import portraitImage from '@/images/photos/bucket.jpg'
 
-function showTesting() {
-  return process.env.NEXT_PUBLIC_CUSTOM_ENV_TESTING === 1 || process.env.NEXT_PUBLIC_CUSTOM_ENV_TESTING === '1'
-}
-
 function SocialLink({ className, href, children, icon: Icon }) {
   return (
     <li className={clsx(className, 'flex')}>
@@ -48,7 +44,7 @@ function Introduction() {
   return (
     <div className="lg:order-first lg:row-span-2">
       <h1 className="text-4xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100 sm:text-5xl">
-        Hey, I&apos;m {showTesting() ? 'TESTING STUFF' : 'Mitch'}
+        Hey, I&apos;m Voz
       </h1>
       <div className="mt-6 text-base space-y-7 text-zinc-600 dark:text-zinc-400">
         <p>
