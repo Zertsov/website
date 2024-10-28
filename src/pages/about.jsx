@@ -60,7 +60,7 @@ function Introduction() {
           I&apos;ve spent my career primarily writing Go services and tooling related to infrastructure, security, and reliability.
           I worked at a couple of large businesses (Target, Visa, and Cloudflare), not only learning how to build services and tools, but how to
           build them in a way that <span className='italic'>scales</span> to the needs of businesses that size. I&apos;m now using those same skills to help {`${work} `}
-          build out {' ' + project}.
+          build out {' ' + project} and other projects.
         </p>
         <p>
           I mostly use this as a way for me to test things I do at Vercel, so if you see broken stuff, assume it&apos;s on purpose.
