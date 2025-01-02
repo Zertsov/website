@@ -14,7 +14,6 @@ function ToolsSection({ children, ...props }) {
   )
 }
 
-// Comment triggering builds
 function Tool({ title, href, children }) {
   return (
     <Card as="li">
