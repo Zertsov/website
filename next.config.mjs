@@ -15,7 +15,7 @@ const nextConfig = {
       beforeFiles: [
         {
           source: '/wheel(s|y)',
-          destination: 'https://www.youtube.com'
+          destination: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
         }
       ],
       afterFiles: [],
