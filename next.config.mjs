@@ -9,6 +9,19 @@ const nextConfig = {
   experimental: {
     scrollRestoration: true,
   },
+
+  async rewrites() {
+    return {
+      beforeFiles: [
+        {
+          source: '/wheel(s|y)',
+          destination: 'https://www.youtube.com'
+        }
+      ],
+      afterFiles: [],
+      fallback: []
+    }
+  }
 }
 
 const withMDX = nextMDX({
