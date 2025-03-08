@@ -2,22 +2,29 @@ import glob from 'fast-glob'
 import * as path from 'path'
 
 async function importArticle(articleFilename) {
-  let { meta, default: component } = await import(
-    `../pages/articles/${articleFilename}`
-  )
+  // Check if we're using the App Router or Pages Router
+  const isAppRouter = articleFilename.includes('/app/')
+  
+  let slug = path.basename(path.dirname(articleFilename))
+  
+  if (isAppRouter) {
+    // For App Router, the structure is /app/articles/[slug]/page.mdx
+    slug = path.basename(path.dirname(path.dirname(articleFilename)))
+  }
+  
+  const { meta, default: component } = await import(`../pages/articles/${slug}/index.mdx`)
   return {
-    slug: articleFilename.replace(/(\/index)?\.mdx$/, ''),
+    slug,
     ...meta,
     component,
   }
 }
 
 export async function getAllArticles() {
-  let articleFilenames = await glob(['*.mdx', '*/index.mdx'], {
-    cwd: path.join(process.cwd(), 'src/pages/articles'),
-  })
-
-  let articles = await Promise.all(articleFilenames.map(importArticle))
-
+  // Look in both directories during migration
+  const articleFilenames = await glob(['**/pages/articles/*/index.mdx', '**/app/articles/*/page.mdx'])
+  
+  const articles = await Promise.all(articleFilenames.map(importArticle))
+  
   return articles.sort((a, z) => new Date(z.date) - new Date(a.date))
 }

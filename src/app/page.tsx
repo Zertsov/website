@@ -1,4 +1,3 @@
-import Head from 'next/head'
 import Image from 'next/image'
 import Link from 'next/link'
 import clsx from 'clsx'
@@ -77,22 +76,18 @@ function Resume() {
     {
       company: 'Cloudflare',
       title: 'Software Engineer',
-      // TODO: Get a good SVG that fits in the circle
-      // logo: cflogo,
       start: '2021',
       end: '2023'
     },
     {
       company: 'Visa',
       title: 'Senior Software Engineer',
-      // logo: logoAirbnb,
       start: '2020',
       end: '2021',
     },
     {
       company: 'Target',
       title: 'Senior Software Engineer',
-      // logo: logoFacebook,
       start: '2017',
       end: '2020',
     },
@@ -172,25 +167,30 @@ function Photos() {
   )
 }
 
-export default function Home({ articles }) {
+export const metadata = {
+  title: 'Mitch Vostrez - Software engineer',
+  description: "I'm Mitch, a software engineer based in Austin. A worldwide traveler and Chiefs fan, just making cool and fun software at Vercel.",
+}
+
+export default async function Home() {
+  // In production, generate RSS feed
+  if (process.env.NODE_ENV === 'production') {
+    await generateRssFeed()
+  }
+
+  const articles = (await getAllArticles())
+    .slice(0, 4)
+    .map(({ component, ...meta }) => meta)
+
   return (
     <>
-      <Head>
-        <title>
-          Mitch Vostrez - Software engineer.
-        </title>
-        <meta
-          name="description"
-          content="I’m Mitch, a software engineer based in Austin. A worldwide traveler and Chiefs fan, just making cool and fun software at Vercel."
-        />
-      </Head>
       <Container className="mt-9">
         <div className="max-w-2xl">
           <h1 className="text-4xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100 sm:text-5xl">
             Software engineer, professional Top Golf Angry Birds golfer.
           </h1>
           <p className="mt-6 text-base text-zinc-600 dark:text-zinc-400">
-            Hey, I’m Mitch, a software engineer based in Austin.
+            Hey, I'm Mitch, a software engineer based in Austin.
             I work at <Link className='underline underline-offset-4' href={'http://www.vercel.com'} target='_blank'>▲ Vercel</Link>
             , helping to build out <Link className='underline underline-offset-4' href={'http://turbo.build/repo'} target='_blank'>Turborepo.</Link>
           </p>
@@ -234,18 +234,4 @@ export default function Home({ articles }) {
       </Container>
     </>
   )
-}
-
-export async function getStaticProps() {
-  if (process.env.NODE_ENV === 'production') {
-    await generateRssFeed()
-  }
-
-  return {
-    props: {
-      articles: (await getAllArticles())
-        .slice(0, 4)
-        .map(({ component, ...meta }) => meta),
-    },
-  }
-}
+} 

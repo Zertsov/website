@@ -1,4 +1,3 @@
-import Head from 'next/head'
 import Image from 'next/image'
 import Link from 'next/link'
 import clsx from 'clsx'
@@ -65,7 +64,6 @@ function Introduction() {
         <p>
           I mostly use this as a way for me to test things I do at Vercel, so if you see broken stuff, assume it&apos;s on purpose.
         </p>
-        {/* Add more p tags here */}
       </div>
     </div>
   )
@@ -96,32 +94,28 @@ function SocialLinks() {
   )
 }
 
+export const metadata = {
+  title: 'About - Mitch Vostrez',
+  description: "I'm Mitch Vostrez, a software engineer at Vercel.",
+}
+
 export default function About() {
   return (
-    <>
-      <Head>
-        <title>About - Mitch Vostrez</title>
-        <meta
-          name="description"
-          content="I’m Mitch Vostrez, a software engineer at Vercel."
-        />
-      </Head>
-      <Container className="mt-16 sm:mt-32">
-        <div className="grid grid-cols-1 gap-y-16 lg:grid-cols-2 lg:grid-rows-[auto_1fr] lg:gap-y-12">
-          <div className="lg:pl-20">
-            <div className="max-w-xs px-2.5 lg:max-w-none">
-              <Image
-                src={portraitImage}
-                alt=""
-                sizes="(min-width: 1024px) 32rem, 20rem"
-                className="object-cover aspect-square rotate-3 rounded-2xl bg-zinc-100 dark:bg-zinc-800"
-              />
-            </div>
+    <Container className="mt-16 sm:mt-32">
+      <div className="grid grid-cols-1 gap-y-16 lg:grid-cols-2 lg:grid-rows-[auto_1fr] lg:gap-y-12">
+        <div className="lg:pl-20">
+          <div className="max-w-xs px-2.5 lg:max-w-none">
+            <Image
+              src={portraitImage}
+              alt=""
+              sizes="(min-width: 1024px) 32rem, 20rem"
+              className="object-cover aspect-square rotate-3 rounded-2xl bg-zinc-100 dark:bg-zinc-800"
+            />
           </div>
-          <Introduction />
-          <SocialLinks />
         </div>
-      </Container>
-    </>
+        <Introduction />
+        <SocialLinks />
+      </div>
+    </Container>
   )
-}
+} 
