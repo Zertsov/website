@@ -66,6 +66,9 @@ importers:
         specifier: ^3.2.1
         version: 3.3.6
     devDependencies:
+      '@types/mapbox__rehype-prism':
+        specifier: ^0.8.3
+        version: 0.8.3
       '@types/node':
         specifier: ^20.10.5
         version: 20.17.24
@@ -414,6 +417,9 @@ packages:
 
   '@types/keyv@3.1.4':
     resolution: {integrity: sha512-BQ5aZNSCpj7D6K2ksrRCTmKRLEpnPvWDiLPfoGyhZ++8YtiK9d/3DBKPJgry359X/P1PfruyYwvnvwFjuEiEIg==}
+
+  '@types/mapbox__rehype-prism@0.8.3':
+    resolution: {integrity: sha512-ayRTSAVHT0XpvKmx5GFN5luxwabuPb3EL06b3hRU0mnv30ETdcGmguk6C20R5EFVv6bWsfG8Jh6OUf+mMIqLdw==}
 
   '@types/mdast@3.0.15':
     resolution: {integrity: sha512-LnwD+mUEfxWMa1QpDraczIn6k0Ee3SMicuYSSzS6ZYl2gKS09EClnJYGd8Du6rfc5r/GZEk5o1mRb8TaTj03sQ==}
@@ -3637,6 +3643,11 @@ snapshots:
   '@types/keyv@3.1.4':
     dependencies:
       '@types/node': 20.17.24
+
+  '@types/mapbox__rehype-prism@0.8.3':
+    dependencies:
+      '@types/hast': 2.3.8
+      unified: 10.1.2
 
   '@types/mdast@3.0.15':
     dependencies:
