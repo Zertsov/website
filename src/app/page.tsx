@@ -17,8 +17,9 @@ import image5 from '@/images/photos/sandmanwedding.jpg'
 import { formatDate } from '@/lib/formatDate'
 import { generateRssFeed } from '@/lib/generateRssFeed'
 import { getAllArticles } from '@/lib/getAllArticles'
+import { Article as ArticleType } from '@/types'
 
-function BriefcaseIcon(props) {
+function BriefcaseIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       viewBox="0 0 24 24"
@@ -39,7 +40,14 @@ function BriefcaseIcon(props) {
   )
 }
 
-function Article({ article }) {
+interface Article {
+  slug: string
+  title: string
+  date: string
+  description: string
+}
+
+function Article({ article }: { article: Article }) {
   return (
     <Card as="article">
       <Card.Title href={`/articles/${article.slug}`}>
@@ -54,7 +62,13 @@ function Article({ article }) {
   )
 }
 
-function SocialLink({ icon: Icon, ...props }) {
+interface SocialLinkProps {
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>
+  href: string
+  [key: string]: any
+}
+
+function SocialLink({ icon: Icon, ...props }: SocialLinkProps) {
   return (
     <Link className="p-1 -m-1 group" {...props}>
       <Icon className="w-6 h-6 transition fill-zinc-500 group-hover:fill-zinc-600 dark:fill-zinc-400 dark:group-hover:fill-zinc-300" />
@@ -62,12 +76,21 @@ function SocialLink({ icon: Icon, ...props }) {
   )
 }
 
+interface ResumeRole {
+  company: string
+  title: string
+  logo?: any
+  start: string | { label?: string; dateTime?: number }
+  end: string | { label?: string; dateTime?: number }
+}
+
 function Resume() {
-  const resume = [
+  let resume: ResumeRole[] = [
     {
       company: 'Vercel',
-      title: 'Software Engineer',
-      start: '2023',
+      title: 'Senior Software Engineer',
+      logo: null,
+      start: '2022',
       end: {
         label: 'Present',
         dateTime: new Date().getFullYear(),
@@ -76,20 +99,23 @@ function Resume() {
     {
       company: 'Cloudflare',
       title: 'Software Engineer',
+      logo: null,
       start: '2021',
-      end: '2023'
+      end: '2022',
     },
     {
       company: 'Visa',
       title: 'Senior Software Engineer',
-      start: '2020',
+      logo: null,
+      start: '2019',
       end: '2021',
     },
     {
       company: 'Target',
-      title: 'Senior Software Engineer',
+      title: 'Senior Engineer',
+      logo: null,
       start: '2017',
-      end: '2020',
+      end: '2019',
     },
   ]
 
@@ -120,16 +146,16 @@ function Resume() {
               <dt className="sr-only">Date</dt>
               <dd
                 className="ml-auto text-xs text-zinc-400 dark:text-zinc-500"
-                aria-label={`${role.start.label ?? role.start} until ${
-                  role.end.label ?? role.end
+                aria-label={`${typeof role.start === 'string' ? role.start : role.start.label ?? role.start} until ${
+                  typeof role.end === 'string' ? role.end : role.end.label ?? role.end
                 }`}
               >
-                <time dateTime={role.start.dateTime ?? role.start}>
-                  {role.start.label ?? role.start}
+                <time dateTime={typeof role.start === 'string' ? role.start : role.start.dateTime?.toString()}>
+                  {typeof role.start === 'string' ? role.start : role.start.label}
                 </time>{' '}
                 <span aria-hidden="true">—</span>{' '}
-                <time dateTime={role.end.dateTime ?? role.end}>
-                  {role.end.label ?? role.end}
+                <time dateTime={typeof role.end === 'string' ? role.end : role.end.dateTime?.toString()}>
+                  {typeof role.end === 'string' ? role.end : role.end.label}
                 </time>
               </dd>
             </dl>
@@ -141,11 +167,11 @@ function Resume() {
 }
 
 function Photos() {
-  const rotations = ['rotate-2', '-rotate-2', 'rotate-2', 'rotate-2', '-rotate-2']
+  let rotations = ['rotate-2', '-rotate-2', 'rotate-2', 'rotate-2', '-rotate-2']
 
   return (
     <div className="mt-16 sm:mt-20">
-      <div className="flex justify-center gap-5 py-4 -my-4 overflow-hidden sm:gap-8">
+      <div className="-my-4 flex justify-center gap-5 overflow-hidden py-4 sm:gap-8">
         {[image1, image2, image3, image4, image5].map((image, imageIndex) => (
           <div
             key={image.src}
@@ -158,7 +184,7 @@ function Photos() {
               src={image}
               alt=""
               sizes="(min-width: 640px) 18rem, 11rem"
-              className="absolute inset-0 object-cover w-full h-full"
+              className="absolute inset-0 h-full w-full object-cover"
             />
           </div>
         ))}
@@ -173,48 +199,33 @@ export const metadata = {
 }
 
 export default async function Home() {
-  // In production, generate RSS feed
-  if (process.env.NODE_ENV === 'production') {
-    await generateRssFeed()
-  }
-
-  const articles = (await getAllArticles())
-    .slice(0, 4)
-    .map(({ component, ...meta }) => meta)
+  let articles = (await getAllArticles()).slice(0, 4).map(({ component, ...meta }) => meta)
 
   return (
     <>
       <Container className="mt-9">
         <div className="max-w-2xl">
           <h1 className="text-4xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100 sm:text-5xl">
-            Software engineer, professional Top Golf Angry Birds golfer.
+            Software engineer, traveler, and sports fan.
           </h1>
           <p className="mt-6 text-base text-zinc-600 dark:text-zinc-400">
-            Hey, I'm Mitch, a software engineer based in Austin.
-            I work at <Link className='underline underline-offset-4' href={'http://www.vercel.com'} target='_blank'>▲ Vercel</Link>
-            , helping to build out <Link className='underline underline-offset-4' href={'http://turbo.build/repo'} target='_blank'>Turborepo.</Link>
+            I'm Mitch, a software engineer based in Austin. I work at Vercel on Turborepo, helping make the web faster for everyone.
           </p>
           <div className="flex gap-6 mt-6">
             <SocialLink
               href="https://twitter.com/VozMajal"
               aria-label="Follow on Twitter"
               icon={TwitterIcon}
-              target="_blank"
-              rel="noreferrer noopener"
             />
             <SocialLink
-              href="https://github.com"
+              href="https://github.com/Zertsov"
               aria-label="Follow on GitHub"
               icon={GitHubIcon}
-              target="_blank"
-              rel="noreferrer noopener"
             />
             <SocialLink
               href="https://www.linkedin.com/in/mitch-vostrez/"
               aria-label="Follow on LinkedIn"
               icon={LinkedInIcon}
-              target="_blank"
-              rel="noreferrer noopener"
             />
           </div>
         </div>
