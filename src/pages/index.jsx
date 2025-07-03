@@ -31,7 +31,7 @@ function BriefcaseIcon(props) {
       {...props}
     >
       <title>Briefcase Icon</title>
-      
+
       <path
         d="M3 14.25h6.249c.484 0 .952-.002 1.316.319l.777.682a.996.996 0 0 0 1.316 0l.777-.682c.364-.32.832-.319 1.316-.319H21M8.75 6.5V4.75a2 2 0 0 1 2-2h2.5a2 2 0 0 1 2 2V6.5"
         className="stroke-zinc-400 dark:stroke-zinc-500"
@@ -125,9 +125,8 @@ function Resume() {
               <dt className="sr-only">Date</dt>
               <dd
                 className="ml-auto text-xs text-zinc-400 dark:text-zinc-500"
-                aria-label={`${role.start.label ?? role.start} until ${
-                  role.end.label ?? role.end
-                }`}
+                aria-label={`${role.start.label ?? role.start} until ${role.end.label ?? role.end
+                  }`}
               >
                 <time dateTime={role.start.dateTime ?? role.start}>
                   {role.start.label ?? role.start}
@@ -196,14 +195,14 @@ export default function Home({ articles }) {
           </p>
           <div className="flex gap-6 mt-6">
             <SocialLink
-              href="https://twitter.com/VozMajal"
+              href="https://x.com/voz_dev"
               aria-label="Follow on Twitter"
               icon={TwitterIcon}
               target="_blank"
               rel="noreferrer noopener"
             />
             <SocialLink
-              href="https://github.com"
+              href="https://github.com/Zertsov"
               aria-label="Follow on GitHub"
               icon={GitHubIcon}
               target="_blank"
