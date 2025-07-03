@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/Card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Separator } from "@/components/ui/separator"
+// import { Separator } from "@/components/ui/separator"
 import {
   Mail,
   Phone,
@@ -477,7 +477,7 @@ export default function Resume() {
                       <span className="font-medium">LinkedIn</span>
                     </motion.a>
                   </div>
-                  <Separator />
+                  {/* <Separator /> */}
                   <div className="text-sm text-gray-500">
                     <p>📍 Austin, TX</p>
                     <p>📞 402-200-0642</p>

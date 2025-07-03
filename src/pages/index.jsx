@@ -191,7 +191,8 @@ export default function Home({ articles }) {
           <p className="mt-6 text-base text-zinc-600 dark:text-zinc-400">
             Hey, I’m Mitch, a software engineer based in Austin.
             I work at <Link className='underline underline-offset-4' href={'http://www.vercel.com'} target='_blank'>▲ Vercel</Link>
-            , helping to build out <Link className='underline underline-offset-4' href={'http://turbo.build/repo'} target='_blank'>Turborepo.</Link>
+            , helping <Link className='underline underline-offset-4' href={'http://turbo.build/repo'} target='_blank'>Turborepo</Link> {' '}
+            and Custom Environments.
           </p>
           <div className="flex gap-6 mt-6">
             <SocialLink
@@ -220,12 +221,13 @@ export default function Home({ articles }) {
       </Container>
       <Photos />
       <Container className="mt-24 md:mt-28">
-        <div className="grid max-w-xl grid-cols-1 mx-auto gap-y-20 lg:max-w-none lg:grid-cols-2">
-          <div className="flex flex-col gap-16">
-            {articles.map((article) => (
-              <Article key={article.slug} article={article} />
-            ))}
-          </div>
+        <div className="grid max-w-xl grid-cols-1 mx-auto gap-y-20">
+          {/* <div className="grid max-w-xl grid-cols-1 mx-auto gap-y-20 lg:max-w-none lg:grid-cols-2"> */}
+          {/* <div className="flex flex-col gap-16"> */}
+          {/*   {articles.map((article) => ( */}
+          {/*     <Article key={article.slug} article={article} /> */}
+          {/*   ))} */}
+          {/* </div> */}
           <div className="space-y-10 lg:pl-16 xl:pl-24">
             <Resume />
           </div>
