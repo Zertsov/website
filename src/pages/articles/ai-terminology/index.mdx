@@ -1,0 +1,146 @@
+---
+title: AI Glossary
+description: Common terms in AI and LLMs explained clearly.
+---
+
+# 🧠 AI Glossary
+
+A curated list of important terms related to artificial intelligence, large language models (LLMs), and their ecosystem.
+
+---
+
+## 🤖 Core Concepts
+
+### Token
+A **token** is a chunk of text — often a word, part of a word, or even a character — used as a unit of processing in language models. For example:
+- `"ChatGPT"` → may be 1 token.
+- `"unbelievable"` → could be split into `["un", "believ", "able"]`.
+
+Most LLMs use **Byte Pair Encoding (BPE)** or similar techniques for tokenization.
+
+---
+
+### Context Window
+The **context window** refers to the maximum number of tokens a model can "remember" in a single input + output cycle. If a model has a 16,000-token context window, you can prompt it with up to 16,000 tokens of combined input and output before older context is discarded.
+
+---
+
+### Prompt
+A **prompt** is the input text you give to the model. It can include instructions, questions, documents, code, or conversation history. Crafting effective prompts is part of **prompt engineering**.
+
+---
+
+### Completion
+A **completion** is the text the model generates in response to your prompt. The model “completes” your input using learned language patterns.
+
+---
+
+## 🧠 Model Architecture
+
+### Transformer
+A **Transformer** is the neural network architecture behind most modern language models. Introduced in 2017 by Vaswani et al. ("Attention is All You Need"), it uses mechanisms like **self-attention** to process sequences efficiently.
+
+---
+
+### Attention
+**Attention** lets the model weigh different parts of the input sequence when generating output. **Self-attention** is how the model relates words to each other in the same sequence.
+
+---
+
+### Parameters
+**Parameters** are the internal values (weights) a model learns during training. More parameters generally mean more capacity, e.g., GPT-3 has 175B parameters.
+
+---
+
+### Embedding
+An **embedding** is a vector representation of a word, sentence, or document in a high-dimensional space, allowing models to understand relationships between concepts mathematically.
+
+---
+
+### Latent Space
+A **latent space** is the abstract, multidimensional space in which embeddings live. Proximity in latent space often means semantic similarity.
+
+---
+
+## ⚙️ Model Usage
+
+### Inference
+**Inference** is the process of running a model to generate predictions or output. When you prompt ChatGPT, you're performing inference.
+
+---
+
+### Fine-tuning
+**Fine-tuning** means training a base model further on a specific dataset to specialize it. This adapts a general model to a particular task or domain.
+
+---
+
+### Few-shot / Zero-shot / One-shot
+These terms describe how much guidance you give the model:
+- **Zero-shot**: No examples provided, just an instruction.
+- **One-shot**: One example included.
+- **Few-shot**: Several examples included to guide the model.
+
+---
+
+### Temperature
+**Temperature** controls randomness in model output:
+- Low values (e.g. `0.2`) make output more deterministic.
+- High values (e.g. `0.9`) introduce more randomness and creativity.
+
+---
+
+### Top-p (Nucleus Sampling)
+**Top-p sampling** limits the model to choosing from the smallest set of tokens whose combined probability exceeds `p` (e.g., 0.9), encouraging diversity while maintaining relevance.
+
+---
+
+## 📦 Deployment + Operations
+
+### Model Weights
+**Model weights** are the saved values of a trained model's parameters. These are what make the model “know” anything.
+
+---
+
+### Quantization
+**Quantization** reduces the precision of model weights (e.g., from float32 to int8) to reduce model size and inference cost — useful for edge deployment.
+
+---
+
+### Distillation
+**Distillation** trains a smaller model (the **student**) to mimic a larger one (the **teacher**), enabling faster and more efficient inference.
+
+---
+
+### RAG (Retrieval-Augmented Generation)
+**RAG** systems retrieve relevant information from a database or document store and use it to augment the model’s context. This helps with up-to-date or domain-specific knowledge.
+
+---
+
+## 📚 Miscellaneous
+
+### Hallucination
+A **hallucination** is when an AI model generates content that is syntactically correct but factually wrong or made up.
+
+---
+
+### Alignment
+**Alignment** is the process of ensuring the model's behavior aligns with human intentions and values. It's a key concern in AI safety.
+
+---
+
+### RLHF (Reinforcement Learning from Human Feedback)
+A method for aligning models by training them with preferences from human feedback. Used to improve helpfulness and reduce harmful outputs.
+
+---
+
+### AGI (Artificial General Intelligence)
+**AGI** is a theoretical form of AI that can perform any intellectual task a human can — not just narrow or specific tasks.
+
+---
+
+### Prompt Injection
+A **prompt injection** is a type of attack where users manipulate the prompt in a way that makes the model ignore its original instructions.
+
+---
+
+Let me know if you want this exported as `.mdx` or extended with visual examples, vector diagrams, or links to further reading.
