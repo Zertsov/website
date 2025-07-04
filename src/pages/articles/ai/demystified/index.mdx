@@ -1,0 +1,216 @@
+import { ArticleLayout } from '@/components/ArticleLayout'
+
+export const meta = {
+  author: 'Mitch Vostrez',
+  date: '2025-07-04',
+  title: 'A Practical Glossary for Understanding AI and LLMs',
+  description: 'Learn the most important terms in AI—from tokens and context windows to transformers and prompt injection—so you can follow the conversation with confidence.'
+}
+
+export default (props) => <ArticleLayout meta={meta} {...props} />
+
+
+# A Practical Glossary for Understanding AI and LLMs
+
+If you've been working in or around AI lately—especially with large language models like ChatGPT, Claude, or Gemini—you’ve likely seen words like _token_, _context window_, _embedding_, or _prompt injection_ thrown around casually. This blog post aims to demystify those terms with concise, practical explanations.
+
+Use this as your go-to glossary when navigating the fast-evolving AI ecosystem.
+
+---
+
+## 🤖 Core Concepts
+
+### **Token**
+A _token_ is a chunk of text that a language model processes. It might be a full word, part of a word, or even punctuation depending on the tokenizer used (e.g., BPE, SentencePiece).
+
+Examples:
+- `"ChatGPT"` → 1 token  
+- `"unbelievable"` → maybe 3 tokens: `"un"`, `"believ"`, `"able"`
+
+Knowing token counts is important because they affect how much you can fit into a model’s context window (see next).
+
+---
+
+### **Context Window**
+The _context window_ is the maximum number of tokens a model can process at once—input **plus** output. For instance:
+- GPT-4 Turbo → 128k tokens  
+- Claude 3 Opus → 200k tokens
+
+If your prompt plus model output exceeds this limit, earlier parts of the input are truncated.
+
+---
+
+### **Prompt**
+The _prompt_ is the text you give the model. It can include:
+- Instructions  
+- Example input/output pairs  
+- Full documents or chat history
+
+Prompt design is part of what’s called **prompt engineering**.
+
+---
+
+### **Completion**
+The _completion_ is what the model returns after processing the prompt—essentially the model’s output.
+
+---
+
+## 🧠 Model Architecture
+
+### **Transformer**
+A _Transformer_ is the neural network architecture powering modern LLMs. Introduced in 2017 in [“Attention is All You Need”](https://arxiv.org/abs/1706.03762), it’s highly parallelizable and excels at sequence processing.
+
+---
+
+### **Attention / Self-Attention**
+_Attention_ lets the model focus on different parts of the input. _Self-attention_ enables understanding context within the input sequence (e.g., subject–verb dependencies).
+
+---
+
+### **Parameters**
+_Parameters_ are the learned weights in a neural network. More parameters = more capacity, but not necessarily better results unless trained well.
+
+Example:  
+- GPT-3 → 175B parameters  
+- LLaMA 3 → varies by configuration
+
+---
+
+### **Embedding**
+An _embedding_ is a numerical representation of a word, sentence, or document in vector space. It lets models measure similarity between different pieces of text.
+
+---
+
+### **Latent Space**
+The high-dimensional vector space where embeddings live. Words or concepts with similar meanings are placed near each other in this space.
+
+---
+
+## ⚙️ Model Usage
+
+### **Inference**
+Running the model to generate output is called _inference_. It differs from training, which adjusts the model weights.
+
+---
+
+### **Fine-tuning**
+_Fine-tuning_ is retraining a base model on a narrower dataset to specialize it (e.g., legal docs, medical text).
+
+---
+
+### **Few-shot / One-shot / Zero-shot Learning**
+- **Zero-shot**: Prompt without examples  
+- **One-shot**: One example in the prompt  
+- **Few-shot**: A handful of examples to guide behavior
+
+This technique gives LLMs context for how to behave without retraining.
+
+---
+
+### **Temperature**
+_Temperature_ controls randomness:
+- Low (0.1–0.3) → deterministic  
+- High (0.8–1.0) → creative, varied responses
+
+---
+
+### **Top-p (Nucleus Sampling)**
+Restricts output sampling to the top `p` cumulative probability mass. If `p = 0.9`, the model samples only from tokens that collectively make up 90% of probability.
+
+---
+
+## 📦 Deployment & Operations
+
+### **Model Weights**
+The saved parameters of a trained model—essentially the model’s brain.
+
+---
+
+### **Quantization**
+Reduces the precision of weights (e.g., float32 → int8) to shrink model size and speed up inference—especially useful for edge deployment.
+
+---
+
+### **Distillation**
+Creates a smaller _student model_ that mimics a large _teacher model_—trading off accuracy for speed.
+
+---
+
+### **RAG (Retrieval-Augmented Generation)**
+Instead of relying purely on what the model "knows," _RAG_ systems fetch external documents and feed them into the prompt to improve accuracy and grounding.
+
+---
+
+## 🧠 AI Behavior & Safety
+
+### **Hallucination**
+When a model generates output that sounds plausible but is factually incorrect or completely made up.
+
+---
+
+### **Alignment**
+The effort to make AI behave according to human values and expectations. Misalignment can cause unethical or harmful outputs.
+
+---
+
+### **RLHF (Reinforcement Learning from Human Feedback)**
+A training approach where human feedback is used to adjust model responses. This makes the model more helpful and less toxic.
+
+---
+
+### **Prompt Injection**
+A technique where a user embeds new instructions into the prompt to override the system's original behavior—similar to SQL injection, but for language.
+
+---
+
+### **AGI (Artificial General Intelligence)**
+A hypothetical AI that can perform any intellectual task a human can. Today’s LLMs are **narrow AI**, not AGI.
+
+---
+
+## ❓ Follow-Up Q&A
+
+### Q1: What are the tradeoffs between large context windows and model performance?
+
+**Answer:**  
+Larger context windows increase flexibility for tasks like summarization, code refactoring, or multi-turn conversations. However:
+- **Latency increases** with longer inputs.
+- **Memory usage spikes** (especially on GPUs).
+- **Token pricing rises** in commercial APIs.
+- **Diminishing returns**: Beyond a certain point, added context has minimal impact on performance if it’s not relevant.
+
+In practice, RAG is often a more efficient solution than throwing everything into the prompt.
+
+---
+
+### Q2: How do tokenization methods like BPE impact summarization or translation?
+
+**Answer:**  
+Tokenization affects:
+- **Granularity of understanding**: BPE preserves subword units (`"ing"`, `"pre"`, `"tion"`), which helps with rare words or neologisms.
+- **Sequence length**: More aggressive splits = more tokens = smaller effective input.
+- **Translation accuracy**: Subword-aware tokenization enables more robust translation between morphologically rich languages.
+
+In short: good tokenization improves generalization, especially for multilingual or long-tail vocabulary tasks.
+
+---
+
+### Q3: How can we use RAG to improve LLM output without modifying the model weights?
+
+**Answer:**  
+RAG pipelines augment the prompt with external documents retrieved from a vector store (e.g., Pinecone, Weaviate, Chroma). Steps:
+1. **Embed the user query**
+2. **Search the vector database for related documents**
+3. **Inject relevant chunks into the prompt**
+4. **Ask the model to answer using that context**
+
+Benefits:
+- Doesn’t require fine-tuning
+- Dynamically updates with new data
+- Reduces hallucinations
+
+RAG is especially useful for domain-specific apps like legal research, medical Q&A, and enterprise knowledge tools.
+
+---
+
+Want more deep dives like this? Let me know which concept you'd like to explore next—prompt engineering strategies, vector databases, or self-hosted LLMs?

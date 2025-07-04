@@ -1,16 +1,13 @@
----
-title: AI Glossary
-description: Common terms in AI and LLMs explained clearly.
----
-
 import { ArticleLayout } from '@/components/ArticleLayout'
 
 export const meta = {
   author: 'Mitch Vostrez',
-  date: '2025-7-4',
+  date: '2025-07-04',
   title: 'AI terminology',
   description: 'Demystifying commonly used words in the AI world.',
 }
+
+export default (props) => <ArticleLayout meta={meta} {...props} />
 
 # 🧠 AI Glossary
 
@@ -151,5 +148,3 @@ A method for aligning models by training them with preferences from human feedba
 A **prompt injection** is a type of attack where users manipulate the prompt in a way that makes the model ignore its original instructions.
 
 ---
-
-Let me know if you want this exported as `.mdx` or extended with visual examples, vector diagrams, or links to further reading.
