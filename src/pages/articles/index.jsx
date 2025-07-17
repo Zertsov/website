@@ -6,6 +6,8 @@ import { formatDate } from '@/lib/formatDate'
 import { getAllArticles } from '@/lib/getAllArticles'
 
 function Article({ article }) {
+  const formattedDate = formatDate(article.date)
+
   return (
     <article className="md:grid md:grid-cols-4 md:items-baseline">
       <Card className="md:col-span-3">
@@ -18,17 +20,20 @@ function Article({ article }) {
           className="md:hidden"
           decorate
         >
-          {formatDate(article.date)}
+          {formattedDate}
         </Card.Eyebrow>
         <Card.Description>{article.description}</Card.Description>
         <Card.Cta>Read article</Card.Cta>
       </Card>
-      <Card.Eyebrow
-        as="time"
-        dateTime={article.date}
-        className="mt-1 hidden md:block"
-      >
-        {formatDate(article.date)}
+      <Card.Eyebrow as='div' className="mt-1 hidden md:block">
+        <time dateTime={article.date}>
+          {formattedDate}
+        </time>
+        {article.tags ?
+          <div>
+            Tags: {article.tags.join(', ')}
+          </div> : null
+        }
       </Card.Eyebrow>
     </article>
   )
