@@ -1,0 +1,101 @@
+import { ArticleLayout } from '@/components/ArticleLayout'
+
+export const meta = {
+  author: 'Mitch Vostrez',
+  date: '2025-09-09',
+  title: 'Keeping notes in your branches',
+  description: 'I often need to take notes while working on a branch, but don\'t want those notes committed. Here\'s how I do it',
+  tags: ['git']
+}
+
+export default (props) => <ArticleLayout meta={meta} {...props} />
+
+When I’m debugging or exploring an issue, I often need quick, localized notes. Traditional note-taking apps like Notion work well for planning and long-term organization, but they don’t fit my workflow when I’m deep in the editor. I want notes tied directly to the branch I’m working on—without committing them to the repo or upstream.
+
+My coding flow is simple:
+1. Fetch the latest from `main` (or whatever your trunk is called).
+2. Create a branch for the fix or feature.
+3. Merge it in.
+4. Repeat.
+
+I live in my editor. Cursor, Zed, and other modern editors bring AI and productivity right where I work. So why shouldn’t my notes live there too?  
+
+That thought led me to:
+> Each branch should have its own notes, inside the repo, but never committed.
+
+## The Problem
+
+When contributing to projects like [Zed](https://github.com/zed-industries/zed), I often work from a fork. I don’t want my notes pushed upstream. Adding `.notes/` to `.gitignore` won’t work either, since those changes wouldn’t be accepted in a PR.
+
+So the question becomes: can Git ignore a directory locally, without touching `.gitignore`?  
+Yes.  
+
+## Step 1: Create a Notes Directory
+
+Run:
+
+```bash
+mkdir .notes/
+```
+
+At first, Git won’t notice it. Add a file to see it show up:
+
+```bash
+echo "testing" > .notes/test.txt
+```
+
+Now it’s tracked—unless we tell Git to ignore it.
+
+## Step 2: Understand Git’s Ignore System
+
+Git checks ignores in three ways:
+1.	Global ignore (`~/.gitignore_global`)
+2.	Repo-specific ignore (`.gitignore`)
+3.	Local repo ignore (`.git/info/exclude`)
+
+Most people only use .gitignore. But the other two are key here.
+
+### Global ignore
+
+Configured via `git config --global`, this applies to all repos on your machine:
+
+```bash
+git config --global core.excludesFile ~/.gitignore_global
+echo ".DS_Store" >> ~/.gitignore_global
+```
+
+Now `.DS_Store` will never be tracked on any repo on that machine. Handy, but not what we need here.
+This could be a solution if you want to always ignore a `.notes/` directory, but you run the risk
+of a repo at some point having a `.notes/` that may want to be tracked, and now you and you alone
+aren't tracking changes in there, leading to possible confusion. There's a safer way to do this.
+
+### Local excludes
+
+Inside every repo’s `.git/` folder is an `info/` directory. It contains an exclude file that
+behaves just like `.gitignore`, but only locally. It’s never tracked or shared.
+
+That makes it perfect for branch-specific notes.
+
+## Step 3: Add `.notes/` to Excludes
+
+Run:
+
+```bash
+mkdir -p .notes
+printf "/.notes/\n" >> .git/info/exclude
+```
+
+Now, your repo will ignore the `.notes/` folder locally, and *only for this repo*.
+You can keep notes in `.notes/` tied to your branches, without risking them in a commit or PR.
+
+---
+
+This keeps notes:
+* Close to your work, inside the repo
+* Branch-specific
+* Completely ignored by upstream
+
+Simple, local, and effective.
+
+There's one issue - this doesn't keep things specific to the branch. To do that practically, you'd need to invest time in `git worktree`, which I have a hard time
+thinking most people will do. Instead, nesting folders in `.notes` is the easy path forward, and works well enough as a solution for the time being.
