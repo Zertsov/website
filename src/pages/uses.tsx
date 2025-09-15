@@ -1,10 +1,15 @@
 import Head from 'next/head'
+import { ComponentProps } from 'react'
 
 import { Card } from '@/components/Card'
 import { Section } from '@/components/Section'
 import { SimpleLayout } from '@/components/SimpleLayout'
 
-function ToolsSection({ children, ...props }) {
+type ToolsSectionProps = {
+  children: React.ReactNode
+} & ComponentProps<typeof Section>
+
+function ToolsSection({ children, ...props }: ToolsSectionProps) {
   return (
     <Section {...props}>
       <ul role="list" className="space-y-16">
@@ -14,7 +19,13 @@ function ToolsSection({ children, ...props }) {
   )
 }
 
-function Tool({ title, href, children }) {
+type ToolProps = {
+  title: string
+  href?: string
+  children: React.ReactNode
+}
+
+function Tool({ title, href, children }: ToolProps) {
   return (
     <Card as="li">
       <Card.Title as="h3" href={href}>

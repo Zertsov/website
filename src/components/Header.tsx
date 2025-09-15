@@ -228,7 +228,7 @@ function AvatarContainer({ className, ...props }: { className?: string } & Compo
   )
 }
 
-function Avatar({ large = false, className, ...props }: { large?: boolean; className?: string } & ComponentProps<typeof Link>) {
+function Avatar({ large = false, className, ...props }: { large?: boolean; className?: string } & Omit<ComponentProps<typeof Link>, 'href'>) {
   return (
     <Link
       href="/"
@@ -334,7 +334,7 @@ export function Header() {
       const borderTransform = `translate3d(${borderX}rem, 0, 0) scale(${borderScale})`
 
       setProperty('--avatar-border-transform', borderTransform)
-      setProperty('--avatar-border-opacity', scale === toScale ? 1 : 0)
+      setProperty('--avatar-border-opacity', scale === toScale ? '1' : '0')
     }
 
     function updateStyles() {
@@ -370,11 +370,11 @@ export function Header() {
             />
             <Container
               className="top-0 order-last -mb-3 pt-3"
-              style={{ position: 'var(--header-position)' }}
+              style={{ position: 'var(--header-position)' as any }}
             >
               <div
                 className="top-[var(--avatar-top,theme(spacing.3))] w-full"
-                style={{ position: 'var(--header-inner-position)' }}
+                style={{ position: 'var(--header-inner-position)' as any }}
               >
                 <div className="relative">
                   <AvatarContainer
@@ -397,11 +397,11 @@ export function Header() {
         <div
           ref={headerRef}
           className="top-0 z-10 h-16 pt-6"
-          style={{ position: 'var(--header-position)' }}
+          style={{ position: 'var(--header-position)' as any }}
         >
           <Container
             className="top-[var(--header-top,theme(spacing.6))] w-full"
-            style={{ position: 'var(--header-inner-position)' }}
+            style={{ position: 'var(--header-inner-position)' as any }}
           >
             <div className="relative flex gap-4">
               <div className="flex flex-1">

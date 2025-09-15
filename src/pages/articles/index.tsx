@@ -1,11 +1,24 @@
 import Head from 'next/head'
+import { GetStaticProps } from 'next'
 
 import { Card } from '@/components/Card'
 import { SimpleLayout } from '@/components/SimpleLayout'
 import { formatDate } from '@/lib/formatDate'
 import { getAllArticles } from '@/lib/getAllArticles'
 
-function Article({ article }) {
+type Article = {
+  slug: string
+  title: string
+  description: string
+  date: string
+  tags?: string[]
+}
+
+type ArticlesIndexProps = {
+  articles: Article[]
+}
+
+function Article({ article }: { article: Article }) {
   const formattedDate = formatDate(article.date)
 
   return (
@@ -39,7 +52,7 @@ function Article({ article }) {
   )
 }
 
-export default function ArticlesIndex({ articles }) {
+export default function ArticlesIndex({ articles }: ArticlesIndexProps) {
   return (
     <>
       <Head>
@@ -65,7 +78,7 @@ export default function ArticlesIndex({ articles }) {
   )
 }
 
-export async function getStaticProps() {
+export const getStaticProps: GetStaticProps<ArticlesIndexProps> = async () => {
   return {
     props: {
       articles: (await getAllArticles()).map(({ component, ...meta }) => meta),

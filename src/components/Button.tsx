@@ -22,9 +22,9 @@ export function Button({ variant = 'primary', className, href, ...props }: Butto
     className
   )
 
-  return href ? (
-    <Link href={href} className={className} {...props} />
-  ) : (
-    <button className={className} {...props} />
-  )
+  if (href) {
+    return <Link href={href} className={className} {...(props as any)} />
+  }
+  
+  return <button className={className} {...(props as any)} />
 }
