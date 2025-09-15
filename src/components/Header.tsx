@@ -1,10 +1,15 @@
-import { Fragment, useEffect, useRef } from 'react'
+import { Popover, Transition } from '@headlessui/react'
+import clsx from 'clsx'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { Popover, Transition } from '@headlessui/react'
-import clsx from 'clsx'
-import { ComponentProps, ReactNode } from 'react'
+import {
+  type ComponentProps,
+  Fragment,
+  type ReactNode,
+  useEffect,
+  useRef,
+} from 'react'
 
 import { Container } from '@/components/Container'
 import avatarImage from '@/images/avatar.jpg'
@@ -74,7 +79,13 @@ function MoonIcon(props: ComponentProps<'svg'>) {
   )
 }
 
-function MobileNavItem({ href, children }: { href: string; children: ReactNode }) {
+function MobileNavItem({
+  href,
+  children,
+}: {
+  href: string
+  children: ReactNode
+}) {
   return (
     <li>
       <Popover.Button as={Link} href={href} className="block py-2">
@@ -216,7 +227,10 @@ function clamp(number: number, a: number, b: number): number {
   return Math.min(Math.max(number, min), max)
 }
 
-function AvatarContainer({ className, ...props }: { className?: string } & ComponentProps<'div'>) {
+function AvatarContainer({
+  className,
+  ...props
+}: { className?: string } & ComponentProps<'div'>) {
   return (
     <div
       className={clsx(
@@ -228,7 +242,14 @@ function AvatarContainer({ className, ...props }: { className?: string } & Compo
   )
 }
 
-function Avatar({ large = false, className, ...props }: { large?: boolean; className?: string } & Omit<ComponentProps<typeof Link>, 'href'>) {
+function Avatar({
+  large = false,
+  className,
+  ...props
+}: { large?: boolean; className?: string } & Omit<
+  ComponentProps<typeof Link>,
+  'href'
+>) {
   return (
     <Link
       href="/"
@@ -270,7 +291,7 @@ export function Header() {
     }
 
     function updateHeaderStyles() {
-      const { top, height } = headerRef.current!.getBoundingClientRect()
+      const { top, height } = headerRef.current?.getBoundingClientRect()
       const scrollY = clamp(
         window.scrollY,
         0,

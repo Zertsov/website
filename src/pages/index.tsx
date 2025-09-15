@@ -1,22 +1,18 @@
+import clsx from 'clsx'
+import type { GetStaticProps } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
 import Link from 'next/link'
-import clsx from 'clsx'
-import { GetStaticProps } from 'next'
-import { ComponentProps } from 'react'
+import type { ComponentProps } from 'react'
 
 import { Card } from '@/components/Card'
 import { Container } from '@/components/Container'
-import {
-  GitHubIcon,
-  LinkedInIcon,
-  TwitterIcon,
-} from '@/components/SocialIcons'
+import { GitHubIcon, LinkedInIcon, TwitterIcon } from '@/components/SocialIcons'
 import image1 from '@/images/photos/amberPalace.jpg'
 import image2 from '@/images/photos/kelceJersey.jpg'
+import image5 from '@/images/photos/sandmanwedding.jpg'
 import image3 from '@/images/photos/siblings.jpg'
 import image4 from '@/images/photos/waterfall.jpg'
-import image5 from '@/images/photos/sandmanwedding.jpg'
 import { formatDate } from '@/lib/formatDate'
 import { getAllArticles } from '@/lib/getAllArticles'
 
@@ -67,7 +63,12 @@ function Article({ article }: { article: Article }) {
   )
 }
 
-function SocialLink({ icon: Icon, ...props }: { icon: React.ComponentType<ComponentProps<'svg'>> } & ComponentProps<typeof Link>) {
+function SocialLink({
+  icon: Icon,
+  ...props
+}: { icon: React.ComponentType<ComponentProps<'svg'>> } & ComponentProps<
+  typeof Link
+>) {
   return (
     <Link className="p-1 -m-1 group" {...props}>
       <Icon className="w-6 h-6 transition fill-zinc-500 group-hover:fill-zinc-600 dark:fill-zinc-400 dark:group-hover:fill-zinc-300" />
@@ -100,7 +101,7 @@ function Resume() {
       // TODO: Get a good SVG that fits in the circle
       // logo: cflogo,
       start: '2021',
-      end: '2023'
+      end: '2023',
     },
     {
       company: 'Visa',
@@ -127,12 +128,11 @@ function Resume() {
       <ol className="mt-6 space-y-4">
         {resume.map((role, roleIndex) => (
           <li key={`role-${roleIndex}`} className="flex gap-4">
-            {
-              role.logo &&
+            {role.logo && (
               <div className="relative flex items-center justify-center flex-none w-10 h-10 mt-1 rounded-full shadow-md shadow-zinc-800/5 ring-1 ring-zinc-900/5 dark:border dark:border-zinc-700/50 dark:bg-zinc-800 dark:ring-0">
                 <Image src={role.logo} alt="" className="h-7 w-7" unoptimized />
               </div>
-            }
+            )}
             <dl className="flex flex-wrap flex-auto gap-x-2">
               <dt className="sr-only">Company</dt>
               <dd className="flex-none w-full text-sm font-medium text-zinc-900 dark:text-zinc-100">
@@ -147,11 +147,25 @@ function Resume() {
                 className="ml-auto text-xs text-zinc-400 dark:text-zinc-500"
                 aria-label={`${typeof role.start === 'string' ? role.start : role.start.label} until ${typeof role.end === 'string' ? role.end : role.end.label}`}
               >
-                <time dateTime={typeof role.start === 'string' ? role.start : role.start.dateTime.toString()}>
-                  {typeof role.start === 'string' ? role.start : role.start.label}
+                <time
+                  dateTime={
+                    typeof role.start === 'string'
+                      ? role.start
+                      : role.start.dateTime.toString()
+                  }
+                >
+                  {typeof role.start === 'string'
+                    ? role.start
+                    : role.start.label}
                 </time>{' '}
                 <span aria-hidden="true">—</span>{' '}
-                <time dateTime={typeof role.end === 'string' ? role.end : role.end.dateTime.toString()}>
+                <time
+                  dateTime={
+                    typeof role.end === 'string'
+                      ? role.end
+                      : role.end.dateTime.toString()
+                  }
+                >
                   {typeof role.end === 'string' ? role.end : role.end.label}
                 </time>
               </dd>
@@ -164,7 +178,13 @@ function Resume() {
 }
 
 function Photos() {
-  const rotations = ['rotate-2', '-rotate-2', 'rotate-2', 'rotate-2', '-rotate-2']
+  const rotations = [
+    'rotate-2',
+    '-rotate-2',
+    'rotate-2',
+    'rotate-2',
+    '-rotate-2',
+  ]
 
   return (
     <div className="mt-16 sm:mt-20">
@@ -194,9 +214,7 @@ export default function Home({ articles }: HomeProps) {
   return (
     <>
       <Head>
-        <title>
-          Mitch Vostrez - Software engineer.
-        </title>
+        <title>Mitch Vostrez - Software engineer.</title>
         <meta
           name="description"
           content="I’m Mitch, a software engineer based in Austin. A worldwide traveler and Chiefs fan, just making cool and fun software at Vercel."
@@ -208,10 +226,23 @@ export default function Home({ articles }: HomeProps) {
             Software engineer, professional Top Golf Angry Birds golfer.
           </h1>
           <p className="mt-6 text-base text-zinc-600 dark:text-zinc-400">
-            Hey, I’m Mitch, a software engineer based in Austin.
-            I work at <Link className='underline underline-offset-4' href={'http://www.vercel.com'} target='_blank'>▲ Vercel</Link>
-            , helping build <Link className='underline underline-offset-4' href={'http://turbo.build/repo'} target='_blank'>Turborepo</Link> and Custom Environments
-            , along with a bunch of other tools.
+            Hey, I’m Mitch, a software engineer based in Austin. I work at{' '}
+            <Link
+              className="underline underline-offset-4"
+              href={'http://www.vercel.com'}
+              target="_blank"
+            >
+              ▲ Vercel
+            </Link>
+            , helping build{' '}
+            <Link
+              className="underline underline-offset-4"
+              href={'http://turbo.build/repo'}
+              target="_blank"
+            >
+              Turborepo
+            </Link>{' '}
+            and Custom Environments , along with a bunch of other tools.
           </p>
           <div className="flex gap-6 mt-6">
             <SocialLink

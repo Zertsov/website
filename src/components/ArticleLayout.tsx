@@ -1,6 +1,6 @@
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import { ComponentProps, ReactNode } from 'react'
+import type { ComponentProps, ReactNode } from 'react'
 
 import { Container } from '@/components/Container'
 import { Prose } from '@/components/Prose'
@@ -38,7 +38,7 @@ export function ArticleLayout({
   isRssFeed = false,
   previousPathname,
 }: ArticleLayoutProps) {
-  let router = useRouter()
+  const router = useRouter()
 
   if (isRssFeed) {
     return children

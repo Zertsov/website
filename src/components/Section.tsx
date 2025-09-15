@@ -1,5 +1,4 @@
-import { useId } from 'react'
-import { ReactNode } from 'react'
+import { type ReactNode, useId } from 'react'
 
 type SectionProps = {
   title: string
@@ -7,7 +6,7 @@ type SectionProps = {
 }
 
 export function Section({ title, children }: SectionProps) {
-  let id = useId()
+  const id = useId()
 
   return (
     <section

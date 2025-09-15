@@ -1,5 +1,5 @@
+import type { ReactNode } from 'react'
 import { Container } from '@/components/Container'
-import { ReactNode } from 'react'
 
 type SimpleLayoutProps = {
   title: string
