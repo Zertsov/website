@@ -1,10 +1,12 @@
-import Head from 'next/head'
-import { useRouter } from 'next/router'
+'use client'
+// import Head from 'next/head'
+import { useRouter } from 'next/navigation'
+import type { Metadata } from 'next'
 import type { ComponentProps, ReactNode } from 'react'
 
 import { Container } from '@/components/Container'
 import { Prose } from '@/components/Prose'
-import { formatDate } from '@/lib/formatDate'
+import { formatDate } from 'lib/formatDate'
 
 type ArticleMeta = {
   title: string
@@ -32,6 +34,11 @@ function ArrowLeftIcon(props: ComponentProps<'svg'>) {
   )
 }
 
+export const metadata: Metadata = {
+  title: 'Articles - Mitch Vostrez',
+  description: 'My thoughts and findings that may help you.',
+}
+
 export function ArticleLayout({
   children,
   meta,
@@ -46,10 +53,10 @@ export function ArticleLayout({
 
   return (
     <>
-      <Head>
+      {/* <Head>
         <title>{`${meta.title} - Mitch Vostrez`}</title>
         <meta name="description" content={meta.description} />
-      </Head>
+      </Head> */}
       <Container className="mt-16 lg:mt-32">
         <div className="xl:relative">
           <div className="mx-auto max-w-2xl">

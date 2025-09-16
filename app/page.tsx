@@ -1,6 +1,6 @@
 import clsx from 'clsx'
-import type { GetStaticProps } from 'next'
-import Head from 'next/head'
+// import Head from 'next/head'
+import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import type { ComponentProps } from 'react'
@@ -13,8 +13,8 @@ import image2 from '@/images/photos/kelceJersey.jpg'
 import image5 from '@/images/photos/sandmanwedding.jpg'
 import image3 from '@/images/photos/siblings.jpg'
 import image4 from '@/images/photos/waterfall.jpg'
-import { formatDate } from '@/lib/formatDate'
-import { getAllArticles } from '@/lib/getAllArticles'
+import { formatDate } from 'lib/formatDate'
+import { getAllArticles } from 'lib/getAllArticles'
 
 type Article = {
   slug: string
@@ -143,10 +143,7 @@ function Resume() {
                 {role.title}
               </dd>
               <dt className="sr-only">Date</dt>
-              <dd
-                className="ml-auto text-xs text-zinc-400 dark:text-zinc-500"
-                aria-label={`${typeof role.start === 'string' ? role.start : role.start.label} until ${typeof role.end === 'string' ? role.end : role.end.label}`}
-              >
+              <dd className="ml-auto text-xs text-zinc-400 dark:text-zinc-500">
                 <time
                   dateTime={
                     typeof role.start === 'string'
@@ -176,7 +173,6 @@ function Resume() {
     </div>
   )
 }
-
 function Photos() {
   const rotations = [
     'rotate-2',
@@ -210,16 +206,26 @@ function Photos() {
   )
 }
 
-export default function Home({ articles }: HomeProps) {
+export const metadata: Metadata = {
+  title: 'Mitch Vostrez - Software engineer.',
+  description:
+    "I'm Mitch, a software engineer based in Austin. A worldwide traveler and Chiefs fan, just making cool and fun software at Vercel.",
+}
+
+export default async function Home() {
+  const articles = (await getAllArticles())
+    .slice(0, 4)
+    .map(({ component, ...meta }) => meta)
+
   return (
     <>
-      <Head>
+      {/* <Head>
         <title>Mitch Vostrez - Software engineer.</title>
         <meta
           name="description"
           content="I’m Mitch, a software engineer based in Austin. A worldwide traveler and Chiefs fan, just making cool and fun software at Vercel."
         />
-      </Head>
+      </Head> */}
       <Container className="mt-9">
         <div className="max-w-2xl">
           <h1 className="text-4xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100 sm:text-5xl">
@@ -286,12 +292,12 @@ export default function Home({ articles }: HomeProps) {
   )
 }
 
-export const getStaticProps: GetStaticProps<HomeProps> = async () => {
-  return {
-    props: {
-      articles: (await getAllArticles())
-        .slice(0, 4)
-        .map(({ component, ...meta }) => meta),
-    },
-  }
-}
+// export const getStaticProps: GetStaticProps<HomeProps> = async () => {
+//   return {
+//     props: {
+//       articles: (await getAllArticles())
+//         .slice(0, 4)
+//         .map(({ component, ...meta }) => meta),
+//     },
+//   }
+// }

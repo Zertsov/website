@@ -1,10 +1,10 @@
-import type { GetStaticProps } from 'next'
-import Head from 'next/head'
+// import Head from 'next/head'
+import type { Metadata } from 'next'
 
 import { Card } from '@/components/Card'
 import { SimpleLayout } from '@/components/SimpleLayout'
-import { formatDate } from '@/lib/formatDate'
-import { getAllArticles } from '@/lib/getAllArticles'
+import { formatDate } from 'lib/formatDate'
+import { getAllArticles } from 'lib/getAllArticles'
 
 type Article = {
   slug: string
@@ -46,16 +46,25 @@ function Article({ article }: { article: Article }) {
   )
 }
 
-export default function ArticlesIndex({ articles }: ArticlesIndexProps) {
+export const metadata: Metadata = {
+  title: 'Articles - Mitch Vostrez',
+  description: 'My thoughts and findings that may help you.',
+}
+
+export default async function ArticlesIndex() {
+  const articles = (await getAllArticles()).map(
+    ({ component, ...meta }) => meta
+  )
+
   return (
     <>
-      <Head>
+      {/* <Head>
         <title>Articles - Mitch Vostrez</title>
         <meta
           name="description"
           content="My thoughts and findings that hopefully help you."
         />
-      </Head>
+      </Head> */}
       <SimpleLayout
         title="My thoughts and findings that may help you."
         intro="As I go throughout my career I find things that make me think 'this may help others', so I want to share them with the world (and also use as a reference for myself)."
@@ -70,12 +79,4 @@ export default function ArticlesIndex({ articles }: ArticlesIndexProps) {
       </SimpleLayout>
     </>
   )
-}
-
-export const getStaticProps: GetStaticProps<ArticlesIndexProps> = async () => {
-  return {
-    props: {
-      articles: (await getAllArticles()).map(({ component, ...meta }) => meta),
-    },
-  }
 }

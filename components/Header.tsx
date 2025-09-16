@@ -1,8 +1,9 @@
+'use client'
 import { Popover, Transition } from '@headlessui/react'
 import clsx from 'clsx'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
+import { usePathname } from 'next/navigation'
 import {
   type ComponentProps,
   Fragment,
@@ -152,7 +153,7 @@ function MobileNavigation(props: ComponentProps<typeof Popover>) {
 }
 
 function NavItem({ href, children }: { href: string; children: ReactNode }) {
-  const isActive = useRouter().pathname === href
+  const isActive = usePathname() === href
 
   return (
     <li>
@@ -272,7 +273,7 @@ function Avatar({
 }
 
 export function Header() {
-  const isHomePage = useRouter().pathname === '/'
+  const isHomePage = usePathname() === '/'
 
   const headerRef = useRef<HTMLDivElement>(null)
   const avatarRef = useRef<HTMLDivElement>(null)
@@ -291,7 +292,10 @@ export function Header() {
     }
 
     function updateHeaderStyles() {
-      const { top, height } = headerRef.current?.getBoundingClientRect()
+      const rect = headerRef.current?.getBoundingClientRect()
+      if (!rect) return
+
+      const { top, height } = rect
       const scrollY = clamp(
         window.scrollY,
         0,

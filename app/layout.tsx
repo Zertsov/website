@@ -1,4 +1,19 @@
-import { Head, Html, Main, NextScript } from 'next/document'
+import { SpeedInsights } from '@vercel/speed-insights/next'
+import type { Metadata } from 'next'
+import { ClientLayout } from '@/components/ClientLayout'
+import { Footer } from '@/components/Footer'
+import { Header } from '@/components/Header'
+
+import '@/styles/tailwind.css'
+import 'focus-visible'
+
+export const metadata: Metadata = {
+  title: {
+    default: 'Mitch Vostrez',
+    template: '%s | Mitch Vostrez',
+  },
+  description: 'Mitch Vostrez',
+}
 
 const modeScript = `
   let darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
@@ -35,17 +50,32 @@ const modeScript = `
   }
 `
 
-export default function Document() {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
   return (
-    <Html className="h-full antialiased" lang="en">
-      <Head>
-        {/* biome-ignore lint/security/noDangerouslySetInnerHtml: Too lazy, we set the stuff above. */}
+    <html className="h-full antialiased" lang="en">
+      <head>
+        {/* biome-ignore lint/security/noDangerouslySetInnerHtml: Dark mode script */}
         <script dangerouslySetInnerHTML={{ __html: modeScript }} />
-      </Head>
+      </head>
       <body className="flex h-full flex-col bg-zinc-50 dark:bg-black">
-        <Main />
-        <NextScript />
+        <div className="fixed inset-0 flex justify-center sm:px-8">
+          <div className="flex w-full max-w-7xl lg:px-8">
+            <div className="w-full bg-white ring-1 ring-zinc-100 dark:bg-zinc-900 dark:ring-zinc-300/20" />
+          </div>
+        </div>
+        <div className="relative">
+          <Header />
+          <main>
+            <ClientLayout>{children}</ClientLayout>
+            <SpeedInsights />
+          </main>
+          <Footer />
+        </div>
       </body>
-    </Html>
+    </html>
   )
 }
