@@ -1,5 +1,5 @@
 import glob from 'fast-glob'
-import * as path from 'path'
+import * as path from 'node:path'
 
 type Article = {
   slug: string
@@ -12,7 +12,7 @@ type Article = {
 }
 
 async function importArticle(articleFilename: string): Promise<Article> {
-  let { meta, default: component } = await import(
+  const { meta, default: component } = await import(
     `../pages/articles/${articleFilename}`
   )
   return {
@@ -23,11 +23,13 @@ async function importArticle(articleFilename: string): Promise<Article> {
 }
 
 export async function getAllArticles(): Promise<Article[]> {
-  let articleFilenames = await glob(['**/*.mdx', '**/*/index.mdx'], {
+  const articleFilenames = await glob(['**/*.mdx', '**/*/index.mdx'], {
     cwd: path.join(process.cwd(), 'src/pages/articles'),
   })
 
-  let articles = await Promise.all(articleFilenames.map(importArticle))
+  const articles = await Promise.all(articleFilenames.map(importArticle))
 
-  return articles.sort((a, z) => new Date(z.date).getTime() - new Date(a.date).getTime())
+  return articles.sort(
+    (a, z) => new Date(z.date).getTime() - new Date(a.date).getTime()
+  )
 }

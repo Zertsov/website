@@ -1,5 +1,5 @@
+import type { GetStaticProps } from 'next'
 import Head from 'next/head'
-import { GetStaticProps } from 'next'
 
 import { Card } from '@/components/Card'
 import { SimpleLayout } from '@/components/SimpleLayout'
@@ -38,15 +38,9 @@ function Article({ article }: { article: Article }) {
         <Card.Description>{article.description}</Card.Description>
         <Card.Cta>Read article</Card.Cta>
       </Card>
-      <Card.Eyebrow as='div' className="mt-1 hidden md:block">
-        <time dateTime={article.date}>
-          {formattedDate}
-        </time>
-        {article.tags ?
-          <div>
-            Tags: {article.tags.join(', ')}
-          </div> : null
-        }
+      <Card.Eyebrow as="div" className="mt-1 hidden md:block">
+        <time dateTime={article.date}>{formattedDate}</time>
+        {article.tags ? <div>Tags: {article.tags.join(', ')}</div> : null}
       </Card.Eyebrow>
     </article>
   )

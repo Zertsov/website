@@ -1,15 +1,11 @@
+import clsx from 'clsx'
 import Head from 'next/head'
 import Image from 'next/image'
 import Link from 'next/link'
-import clsx from 'clsx'
-import { ComponentProps } from 'react'
+import type { ComponentProps } from 'react'
 
 import { Container } from '@/components/Container'
-import {
-  GitHubIcon,
-  LinkedInIcon,
-  TwitterIcon,
-} from '@/components/SocialIcons'
+import { GitHubIcon, LinkedInIcon, TwitterIcon } from '@/components/SocialIcons'
 import portraitImage from '@/images/photos/bucket.jpg'
 
 function showTesting(): boolean {
@@ -23,7 +19,12 @@ type SocialLinkProps = {
   icon: React.ComponentType<ComponentProps<'svg'>>
 }
 
-function SocialLink({ className, href, children, icon: Icon }: SocialLinkProps) {
+function SocialLink({
+  className,
+  href,
+  children,
+  icon: Icon,
+}: SocialLinkProps) {
   return (
     <li className={clsx(className, 'flex')}>
       <Link
@@ -50,7 +51,7 @@ function MailIcon(props: ComponentProps<'svg'>) {
 }
 
 function Introduction() {
-  const work = 'Vercel' 
+  const work = 'Vercel'
   const project = 'Turborepo'
 
   return (
@@ -60,18 +61,25 @@ function Introduction() {
       </h1>
       <div className="mt-6 text-base space-y-7 text-zinc-600 dark:text-zinc-400">
         <p>
-          I&apos;ve been getting in trouble with computers since I was a kid, from breaking my dad&apos;s
-          old Gateway tower at the office trying to play my Power Rangers CD when I was 5, to causing scheduled
-          shutdowns of computers throughout my high school network to give my friends extra time to study for exams.
+          I&apos;ve been getting in trouble with computers since I was a kid,
+          from breaking my dad&apos;s old Gateway tower at the office trying to
+          play my Power Rangers CD when I was 5, to causing scheduled shutdowns
+          of computers throughout my high school network to give my friends
+          extra time to study for exams.
         </p>
         <p>
-          I&apos;ve spent my career primarily writing Go services and tooling related to infrastructure, security, and reliability.
-          I worked at a couple of large businesses (Target, Visa, and Cloudflare), not only learning how to build services and tools, but how to
-          build them in a way that <span className='italic'>scales</span> to the needs of businesses that size. I&apos;m now using those same skills to help {`${work} `}
-          build out {' ' + project}.
+          I&apos;ve spent my career primarily writing Go services and tooling
+          related to infrastructure, security, and reliability. I worked at a
+          couple of large businesses (Target, Visa, and Cloudflare), not only
+          learning how to build services and tools, but how to build them in a
+          way that <span className="italic">scales</span> to the needs of
+          businesses that size. I&apos;m now using those same skills to help{' '}
+          {`${work} `}
+          build out {` ${project}`}.
         </p>
         <p>
-          I mostly use this as a way for me to test things I do at Vercel, so if you see broken stuff, assume it&apos;s on purpose.
+          I mostly use this as a way for me to test things I do at Vercel, so if
+          you see broken stuff, assume it&apos;s on purpose.
         </p>
         {/* Add more p tags here */}
       </div>
@@ -86,10 +94,18 @@ function SocialLinks() {
         <SocialLink href="https://twitter.com/VozMajal" icon={TwitterIcon}>
           Follow on Twitter
         </SocialLink>
-        <SocialLink href="https://github.com/Zertsov" icon={GitHubIcon} className="mt-4">
+        <SocialLink
+          href="https://github.com/Zertsov"
+          icon={GitHubIcon}
+          className="mt-4"
+        >
           Follow on GitHub
         </SocialLink>
-        <SocialLink href="https://www.linkedin.com/in/mitch-vostrez/" icon={LinkedInIcon} className="mt-4">
+        <SocialLink
+          href="https://www.linkedin.com/in/mitch-vostrez/"
+          icon={LinkedInIcon}
+          className="mt-4"
+        >
           Follow on LinkedIn
         </SocialLink>
         <SocialLink
