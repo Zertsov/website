@@ -27,13 +27,16 @@ dependencies:
     specifier: ^1.2.3
     version: 1.2.3(@types/react@18.2.45)(react@19.0.0-rc-02c0e824-20241028)
   '@tailwindcss/typography':
-    specifier: ^0.5.4
+    specifier: ^0.5.10
     version: 0.5.10(tailwindcss@3.3.6)
+  '@types/mdx':
+    specifier: ^2.0.13
+    version: 2.0.13
   '@vercel/speed-insights':
     specifier: ^1.0.2
-    version: 1.0.2
+    version: 1.2.0(next@15.5.3)(react@19.0.0-rc-02c0e824-20241028)
   autoprefixer:
-    specifier: ^10.4.12
+    specifier: ^10.4.16
     version: 10.4.16(postcss@8.5.6)
   class-variance-authority:
     specifier: ^0.7.1
@@ -42,7 +45,7 @@ dependencies:
     specifier: ^1.2.1
     version: 1.2.1
   fast-glob:
-    specifier: ^3.2.11
+    specifier: ^3.3.2
     version: 3.3.2
   focus-visible:
     specifier: ^5.2.0
@@ -72,7 +75,7 @@ dependencies:
     specifier: ^3.3.1
     version: 3.3.1
   tailwindcss:
-    specifier: ^3.2.1
+    specifier: ^3.3.6
     version: 3.3.6
 
 devDependencies:
@@ -80,16 +83,16 @@ devDependencies:
     specifier: ^2.2.4
     version: 2.2.4
   '@types/node':
-    specifier: ^20.0.0
+    specifier: ^20.10.4
     version: 20.10.4
   '@types/react':
-    specifier: ^18.0.0
+    specifier: ^18.2.45
     version: 18.2.45
   '@types/react-dom':
-    specifier: ^18.0.0
+    specifier: ^18.3.7
     version: 18.3.7(@types/react@18.2.45)
   typescript:
-    specifier: ^5.0.0
+    specifier: ^5.3.3
     version: 5.3.3
 
 packages:
@@ -1044,9 +1047,32 @@ packages:
     resolution: {integrity: sha512-WmoN8qaIAo7WTYWbAZuG8PYEhn5fkz7dZrqTBZ7dtt//lL2Gwms1IcnQ5yHqjDfX8Ft5j4YzDM23f87zBfDe9g==}
     dev: false
 
-  /@vercel/speed-insights@1.0.2:
-    resolution: {integrity: sha512-y5HWeB6RmlyVYxJAMrjiDEz8qAIy2cit0fhBq+MD78WaUwQvuBnQlX4+5MuwVTWi46bV3klaRMq83u9zUy1KOg==}
+  /@vercel/speed-insights@1.2.0(next@15.5.3)(react@19.0.0-rc-02c0e824-20241028):
+    resolution: {integrity: sha512-y9GVzrUJ2xmgtQlzFP2KhVRoCglwfRQgjyfY607aU0hh0Un6d0OUyrJkjuAlsV18qR4zfoFPs/BiIj9YDS6Wzw==}
     requiresBuild: true
+    peerDependencies:
+      '@sveltejs/kit': ^1 || ^2
+      next: '>= 13'
+      react: ^18 || ^19 || ^19.0.0-rc
+      svelte: '>= 4'
+      vue: ^3
+      vue-router: ^4
+    peerDependenciesMeta:
+      '@sveltejs/kit':
+        optional: true
+      next:
+        optional: true
+      react:
+        optional: true
+      svelte:
+        optional: true
+      vue:
+        optional: true
+      vue-router:
+        optional: true
+    dependencies:
+      next: 15.5.3(react-dom@19.0.0-rc-02c0e824-20241028)(react@19.0.0-rc-02c0e824-20241028)
+      react: 19.0.0-rc-02c0e824-20241028
     dev: false
 
   /acorn-jsx@5.3.2(acorn@8.15.0):
@@ -1150,7 +1176,7 @@ packages:
       postcss: ^8.1.0
     dependencies:
       browserslist: 4.22.2
-      caniuse-lite: 1.0.30001570
+      caniuse-lite: 1.0.30001741
       fraction.js: 4.3.7
       normalize-range: 0.1.2
       picocolors: 1.0.0
@@ -1225,7 +1251,7 @@ packages:
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
     hasBin: true
     dependencies:
-      caniuse-lite: 1.0.30001570
+      caniuse-lite: 1.0.30001741
       electron-to-chromium: 1.4.613
       node-releases: 2.0.14
       update-browserslist-db: 1.0.13(browserslist@4.22.2)
@@ -1263,12 +1289,8 @@ packages:
     engines: {node: '>=6'}
     dev: false
 
-  /caniuse-lite@1.0.30001570:
-    resolution: {integrity: sha512-+3e0ASu4sw1SWaoCtvPeyXp+5PsjigkSt8OXZbF9StH5pQWbxEjLAZE3n8Aup5udop1uRiKA7a4utUk/uoSpUw==}
-    dev: false
-
-  /caniuse-lite@1.0.30001677:
-    resolution: {integrity: sha512-fmfjsOlJUpMWu+mAAtZZZHz7UEwsUxIIvu1TJfO1HqFQvB/B+ii0xr9B5HpbZY/mC4XZ8SvjHJqtAY6pDPQEog==}
+  /caniuse-lite@1.0.30001741:
+    resolution: {integrity: sha512-QGUGitqsc8ARjLdgAfxETDhRbJ0REsP6O3I96TAth/mVjh2cYzN2u+3AzPP3aVSm2FehEItaJw1xd+IGBXWeSw==}
     dev: false
 
   /capture-stack-trace@1.0.2:
@@ -1450,6 +1472,7 @@ packages:
 
   /color-name@1.1.4:
     resolution: {integrity: sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA==}
+    requiresBuild: true
     dev: false
 
   /color-string@1.9.1:
@@ -1457,7 +1480,7 @@ packages:
     requiresBuild: true
     dependencies:
       color-name: 1.1.4
-      simple-swizzle: 0.2.2
+      simple-swizzle: 0.2.4
     dev: false
     optional: true
 
@@ -2251,8 +2274,8 @@ packages:
       is-decimal: 2.0.1
     dev: false
 
-  /is-arrayish@0.3.2:
-    resolution: {integrity: sha512-eVRqCvVlZbuw3GrM63ovNSNAeA1K16kaR/LRY/92w0zxQ5/1YzwblUX652i4Xs9RwAGjW9d9y6X88t8OaAJfWQ==}
+  /is-arrayish@0.3.4:
+    resolution: {integrity: sha512-m6UrgzFVUYawGBh1dUsWR5M2Clqic9RVXC/9f8ceNlv2IcO9j9J/z8UoCLPqtsPBFNzEpfR3xftohbfqDx8EQA==}
     requiresBuild: true
     dev: false
     optional: true
@@ -3261,7 +3284,7 @@ packages:
     dependencies:
       '@next/env': 15.5.3
       '@swc/helpers': 0.5.15
-      caniuse-lite: 1.0.30001677
+      caniuse-lite: 1.0.30001741
       postcss: 8.4.31
       react: 19.0.0-rc-02c0e824-20241028
       react-dom: 19.0.0-rc-02c0e824-20241028(react@19.0.0-rc-02c0e824-20241028)
@@ -4030,11 +4053,11 @@ packages:
     resolution: {integrity: sha512-wnD2ZE+l+SPC/uoS0vXeE9L1+0wuaMqKlfz9AMUo38JsyLSBWSFcHR1Rri62LZc12vLr1gb3jl7iwQhgwpAbGQ==}
     dev: false
 
-  /simple-swizzle@0.2.2:
-    resolution: {integrity: sha512-JA//kQgZtbuY83m+xT+tXJkmJncGMTFT+C+g2h2R9uxkYIrE2yy9sgmcLhCnw57/WSD+Eh3J97FPEDFnbXnDUg==}
+  /simple-swizzle@0.2.4:
+    resolution: {integrity: sha512-nAu1WFPQSMNr2Zn9PGSZK9AGn4t/y97lEm+MXTtUDwfP0ksAIX4nO+6ruD9Jwut4C49SB1Ws+fbXsm/yScWOHw==}
     requiresBuild: true
     dependencies:
-      is-arrayish: 0.3.2
+      is-arrayish: 0.3.4
     dev: false
     optional: true
 

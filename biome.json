@@ -8,8 +8,7 @@
   "files": {
     "ignoreUnknown": false,
     "includes": [
-      "src/**/*",
-      "pages/**/*",
+      "app/**/*",
       "components/**/*",
       "*.js",
       "*.jsx",
@@ -17,7 +16,7 @@
       "*.tsx",
       "*.json"
     ],
-    "experimentalScannerIgnores": ["**/*.css", "src/styles/**"]
+    "experimentalScannerIgnores": ["**/*.css", "styles/**"]
   },
   "formatter": {
     "enabled": true,

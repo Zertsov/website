@@ -1,4 +1,5 @@
-import Head from 'next/head'
+// import Head from 'next/head'
+import type { Metadata } from 'next'
 import type { ComponentProps } from 'react'
 
 import { Card } from '@/components/Card'
@@ -36,16 +37,21 @@ function Tool({ title, href, children }: ToolProps) {
   )
 }
 
+export const metadata: Metadata = {
+  title: 'Uses - Mitch Vostrez',
+  description: 'Software I use, gadgets I love, and other things I recommend.',
+}
+
 export default function Uses() {
   return (
     <>
-      <Head>
+      {/* <Head>
         <title>Uses - Mitch Vostrez</title>
         <meta
           name="description"
           content="Software I use, gadgets I love, and other things I recommend."
         />
-      </Head>
+      </Head> */}
       <SimpleLayout title="Stuff I use" intro="">
         <div className="space-y-20">
           <ToolsSection title="Workstation">

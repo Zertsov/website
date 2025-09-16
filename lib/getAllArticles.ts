@@ -13,18 +13,18 @@ type Article = {
 
 async function importArticle(articleFilename: string): Promise<Article> {
   const { meta, default: component } = await import(
-    `../pages/articles/${articleFilename}`
+    `../app/articles/${articleFilename}`
   )
   return {
-    slug: articleFilename.replace(/(\/index)?\.mdx$/, ''),
+    slug: articleFilename.replace(/(\/page)?\.mdx$/, ''),
     ...meta,
     component,
   }
 }
 
 export async function getAllArticles(): Promise<Article[]> {
-  const articleFilenames = await glob(['**/*.mdx', '**/*/index.mdx'], {
-    cwd: path.join(process.cwd(), 'src/pages/articles'),
+  const articleFilenames = await glob(['**/*.mdx', '**/*/page.mdx'], {
+    cwd: path.join(process.cwd(), 'app/articles'),
   })
 
   const articles = await Promise.all(articleFilenames.map(importArticle))
