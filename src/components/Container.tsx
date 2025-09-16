@@ -33,16 +33,16 @@ const InnerContainer = forwardRef<HTMLDivElement, ContainerProps>(function Inner
   )
 })
 
-export const Container = forwardRef<HTMLDivElement, ContainerProps>(function Container(
-  { children, ...props },
-  ref
-) {
+function Container({ children, ...props }: ContainerProps) {
+  const { ref, ...restProps } = props as any
   return (
-    <OuterContainer ref={ref} {...props}>
+    <OuterContainer {...restProps}>
       <InnerContainer>{children}</InnerContainer>
     </OuterContainer>
   )
-})
+}
 
 Container.Outer = OuterContainer
 Container.Inner = InnerContainer
+
+export { Container }

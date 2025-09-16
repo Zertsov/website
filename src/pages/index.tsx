@@ -2,6 +2,8 @@ import Head from 'next/head'
 import Image from 'next/image'
 import Link from 'next/link'
 import clsx from 'clsx'
+import { GetStaticProps } from 'next'
+import { ComponentProps } from 'react'
 
 import { Card } from '@/components/Card'
 import { Container } from '@/components/Container'
@@ -16,10 +18,20 @@ import image3 from '@/images/photos/siblings.jpg'
 import image4 from '@/images/photos/waterfall.jpg'
 import image5 from '@/images/photos/sandmanwedding.jpg'
 import { formatDate } from '@/lib/formatDate'
-import { generateRssFeed } from '@/lib/generateRssFeed'
 import { getAllArticles } from '@/lib/getAllArticles'
 
-function BriefcaseIcon(props) {
+type Article = {
+  slug: string
+  title: string
+  description: string
+  date: string
+}
+
+type HomeProps = {
+  articles: Article[]
+}
+
+function BriefcaseIcon(props: ComponentProps<'svg'>) {
   return (
     <svg
       viewBox="0 0 24 24"
@@ -40,7 +52,7 @@ function BriefcaseIcon(props) {
   )
 }
 
-function Article({ article }) {
+function Article({ article }: { article: Article }) {
   return (
     <Card as="article">
       <Card.Title href={`/articles/${article.slug}`}>
@@ -55,7 +67,7 @@ function Article({ article }) {
   )
 }
 
-function SocialLink({ icon: Icon, ...props }) {
+function SocialLink({ icon: Icon, ...props }: { icon: React.ComponentType<ComponentProps<'svg'>> } & ComponentProps<typeof Link>) {
   return (
     <Link className="p-1 -m-1 group" {...props}>
       <Icon className="w-6 h-6 transition fill-zinc-500 group-hover:fill-zinc-600 dark:fill-zinc-400 dark:group-hover:fill-zinc-300" />
@@ -63,8 +75,16 @@ function SocialLink({ icon: Icon, ...props }) {
   )
 }
 
+type ResumeItem = {
+  company: string
+  title: string
+  start: string | { label: string; dateTime: number }
+  end: string | { label: string; dateTime: number }
+  logo?: any
+}
+
 function Resume() {
-  const resume = [
+  const resume: ResumeItem[] = [
     {
       company: 'Vercel',
       title: 'Software Engineer',
@@ -125,15 +145,14 @@ function Resume() {
               <dt className="sr-only">Date</dt>
               <dd
                 className="ml-auto text-xs text-zinc-400 dark:text-zinc-500"
-                aria-label={`${role.start.label ?? role.start} until ${role.end.label ?? role.end
-                  }`}
+                aria-label={`${typeof role.start === 'string' ? role.start : role.start.label} until ${typeof role.end === 'string' ? role.end : role.end.label}`}
               >
-                <time dateTime={role.start.dateTime ?? role.start}>
-                  {role.start.label ?? role.start}
+                <time dateTime={typeof role.start === 'string' ? role.start : role.start.dateTime.toString()}>
+                  {typeof role.start === 'string' ? role.start : role.start.label}
                 </time>{' '}
                 <span aria-hidden="true">—</span>{' '}
-                <time dateTime={role.end.dateTime ?? role.end}>
-                  {role.end.label ?? role.end}
+                <time dateTime={typeof role.end === 'string' ? role.end : role.end.dateTime.toString()}>
+                  {typeof role.end === 'string' ? role.end : role.end.label}
                 </time>
               </dd>
             </dl>
@@ -171,7 +190,7 @@ function Photos() {
   )
 }
 
-export default function Home({ articles }) {
+export default function Home({ articles }: HomeProps) {
   return (
     <>
       <Head>
@@ -236,11 +255,7 @@ export default function Home({ articles }) {
   )
 }
 
-export async function getStaticProps() {
-  if (process.env.NODE_ENV === 'production') {
-    await generateRssFeed()
-  }
-
+export const getStaticProps: GetStaticProps<HomeProps> = async () => {
   return {
     props: {
       articles: (await getAllArticles())

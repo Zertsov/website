@@ -82,7 +82,7 @@ Card.Eyebrow = function CardEyebrow({
   decorate?: boolean
   className?: string
   children: ReactNode
-} & ComponentProps<keyof JSX.IntrinsicElements>) {
+} & any) {
   return (
     <Component
       className={clsx(

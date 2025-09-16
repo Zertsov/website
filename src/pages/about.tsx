@@ -2,6 +2,7 @@ import Head from 'next/head'
 import Image from 'next/image'
 import Link from 'next/link'
 import clsx from 'clsx'
+import { ComponentProps } from 'react'
 
 import { Container } from '@/components/Container'
 import {
@@ -11,11 +12,18 @@ import {
 } from '@/components/SocialIcons'
 import portraitImage from '@/images/photos/bucket.jpg'
 
-function showTesting() {
-  return process.env.NEXT_PUBLIC_CUSTOM_ENV_TESTING === 1 || process.env.NEXT_PUBLIC_CUSTOM_ENV_TESTING === '1'
+function showTesting(): boolean {
+  return process.env.NEXT_PUBLIC_CUSTOM_ENV_TESTING === '1'
 }
 
-function SocialLink({ className, href, children, icon: Icon }) {
+type SocialLinkProps = {
+  className?: string
+  href: string
+  children: React.ReactNode
+  icon: React.ComponentType<ComponentProps<'svg'>>
+}
+
+function SocialLink({ className, href, children, icon: Icon }: SocialLinkProps) {
   return (
     <li className={clsx(className, 'flex')}>
       <Link
@@ -29,7 +37,7 @@ function SocialLink({ className, href, children, icon: Icon }) {
   )
 }
 
-function MailIcon(props) {
+function MailIcon(props: ComponentProps<'svg'>) {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" {...props}>
       <title>Mail icon</title>

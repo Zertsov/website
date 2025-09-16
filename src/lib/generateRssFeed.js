@@ -2,10 +2,11 @@ import ReactDOMServer from 'react-dom/server'
 import { Feed } from 'feed'
 import { mkdir, writeFile } from 'fs/promises'
 import { withRouter } from 'next/router'
+import { ReactElement } from 'react'
 
 import { getAllArticles } from './getAllArticles'
 
-export async function generateRssFeed() {
+export async function generateRssFeed(): Promise<void> {
   let articles = await getAllArticles()
   let siteUrl = process.env.NEXT_PUBLIC_SITE_URL
   let author = {
