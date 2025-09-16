@@ -1,10 +1,10 @@
 import clsx from 'clsx'
-// import Head from 'next/head'
+import { formatDate } from 'lib/formatDate'
+import { getAllArticles } from 'lib/getAllArticles'
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import type { ComponentProps } from 'react'
-
 import { Card } from '@/components/Card'
 import { Container } from '@/components/Container'
 import { GitHubIcon, LinkedInIcon, TwitterIcon } from '@/components/SocialIcons'
@@ -13,18 +13,12 @@ import image2 from '@/images/photos/kelceJersey.jpg'
 import image5 from '@/images/photos/sandmanwedding.jpg'
 import image3 from '@/images/photos/siblings.jpg'
 import image4 from '@/images/photos/waterfall.jpg'
-import { formatDate } from 'lib/formatDate'
-import { getAllArticles } from 'lib/getAllArticles'
 
 type Article = {
   slug: string
   title: string
   description: string
   date: string
-}
-
-type HomeProps = {
-  articles: Article[]
 }
 
 function BriefcaseIcon(props: ComponentProps<'svg'>) {
@@ -126,8 +120,11 @@ function Resume() {
         <span className="ml-3">Work</span>
       </h2>
       <ol className="mt-6 space-y-4">
-        {resume.map((role, roleIndex) => (
-          <li key={`role-${roleIndex}`} className="flex gap-4">
+        {resume.map((role) => (
+          <li
+            key={`${role.company}-${role.title}-${role.start}`}
+            className="flex gap-4"
+          >
             {role.logo && (
               <div className="relative flex items-center justify-center flex-none w-10 h-10 mt-1 rounded-full shadow-md shadow-zinc-800/5 ring-1 ring-zinc-900/5 dark:border dark:border-zinc-700/50 dark:bg-zinc-800 dark:ring-0">
                 <Image src={role.logo} alt="" className="h-7 w-7" unoptimized />
@@ -219,13 +216,6 @@ export default async function Home() {
 
   return (
     <>
-      {/* <Head>
-        <title>Mitch Vostrez - Software engineer.</title>
-        <meta
-          name="description"
-          content="I’m Mitch, a software engineer based in Austin. A worldwide traveler and Chiefs fan, just making cool and fun software at Vercel."
-        />
-      </Head> */}
       <Container className="mt-9">
         <div className="max-w-2xl">
           <h1 className="text-4xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100 sm:text-5xl">

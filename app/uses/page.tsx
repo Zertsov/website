@@ -13,9 +13,7 @@ type ToolsSectionProps = {
 function ToolsSection({ children, ...props }: ToolsSectionProps) {
   return (
     <Section {...props}>
-      <ul className="space-y-16">
-        {children}
-      </ul>
+      <ul className="space-y-16">{children}</ul>
     </Section>
   )
 }
