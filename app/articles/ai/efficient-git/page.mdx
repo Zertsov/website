@@ -1,0 +1,59 @@
+import { ArticleLayout } from '@/components/ArticleLayout'
+
+export const meta = {
+  author: 'Mitch Vostrez',
+  date: '2025-09-19',
+  title: 'AI is better with git worktrees',
+  description: 'Modern development leans on AI. Worktrees let every branch live in its own folder so agents and humans can move in parallel.',
+  tags: ['ai', 'git']
+}
+
+export default (props) => <ArticleLayout meta={meta} {...props} />
+
+Lately I've been leaning on AI pair programming to move faster. When Codex landed I suddenly
+wanted to explore several feature ideas at once: let one agent rethink the layout, another
+prototype a new capability, while I chased down bug fixes. The problem is obvious—my repo only
+has one working tree, and constantly juggling branches interrupts the flow.
+
+Worktrees solve that. A worktree lets you check out any branch into its own directory while
+sharing the same `.git` history. That means each task—human or AI—can live in its own folder
+without trampling the others. For example, in my `~/git/product-site` project I can keep `main`
+in the original directory while `git worktree add ../product-site-layout redesign-layout`
+spins up a new folder that tracks the `redesign-layout` branch.
+
+Because each worktree is just another folder, I can point Codex at the layout worktree, keep
+another agent focused on an API branch, and continue coding in the original repo. Everyone has
+an isolated workspace, and the branches stay tidy.
+
+This pattern is just as useful when no AI is involved. We've all been halfway through a
+refactor when an urgent production issue arrives. The classic response is:
+
+```bash
+git stash
+```
+
+Then you patch the bug, pull latest, and hope `git stash pop` lands cleanly. It works, but a
+crowded stash eventually turns into archeology. With worktrees you simply check out a fresh
+tree for the hotfix and leave your in-progress refactor untouched.
+
+Here's how that looks with an example project in `~/git/`:
+
+```bash
+cd ~/git/product-site
+
+# See the current worktrees (you start with just one)
+git worktree list
+
+# Spin up a worktree for a layout branch
+git worktree add ../product-site-layout redesign-layout
+
+# Create another worktree for an AI-assisted feature branch
+git worktree add ../product-site-ai feature/ai-assistant
+
+# When you're done, clean up the extra directories
+git worktree remove ../product-site-layout
+git worktree remove ../product-site-ai
+```
+
+Now you can keep each branch—and each collaborator—focused without the constant stash,
+checkout, reset dance.
