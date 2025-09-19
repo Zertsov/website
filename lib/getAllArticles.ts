@@ -1,7 +1,7 @@
 import glob from 'fast-glob'
 import * as path from 'node:path'
 
-type Article = {
+export type Article = {
   slug: string
   component: any // TODO(voz): get type for MDX content
   author: string
@@ -10,6 +10,8 @@ type Article = {
   tags?: string[]
   description: string
 }
+
+export type ArticleMeta = Omit<Article, 'component'>
 
 async function importArticle(articleFilename: string): Promise<Article> {
   const { meta, default: component } = await import(
