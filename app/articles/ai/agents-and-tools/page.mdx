@@ -1,0 +1,70 @@
+import { ArticleLayout } from '@/components/ArticleLayout'
+
+export const meta = {
+  author: 'Mitch Vostrez',
+  date: '2025-07-06',
+  title: 'Understanding AI Agents and Their Tools',
+  description: 'Clarify how AI agents decide what to do and the role tools play in executing their plans.',
+  tags: ['ai', 'agents', 'tools']
+}
+
+export default (props) => <ArticleLayout meta={meta} {...props} />
+
+# Agents and Tools: Building Blocks of Modern AI Workflows
+
+AI conversations often mix up the words *agent* and *tool*. They work together, but they are not interchangeable. Agents chart the course; tools give them leverage. Knowing the difference makes it easier to design AI systems you can trust.
+
+---
+
+## What Is an AI Agent?
+
+An AI agent is software that pursues a goal with autonomy. It observes the state of the world, reasons about next steps, and takes action until the job is done or a human says stop.
+
+At minimum, an effective agent needs:
+- **Purpose**: a clear goal or policy that guides decisions.
+- **Perception**: inputs such as user prompts, API responses, or sensor data.
+- **Reasoning loop**: the logic that plans, evaluates, and adapts while work is in progress.
+- **Action surface**: the abilities it can call on—often exposed as tools.
+
+Think of the agent as the conductor of an orchestra. It decides what should happen next, but it does not play every instrument itself.
+
+---
+
+## What Counts as a Tool?
+
+A tool is a focused capability the agent can invoke on demand. Tools expose specific, bounded actions—sending an email, querying a database, running a shell command, transforming a file, or triggering another service.
+
+Key traits of a tool:
+- **Single responsibility**: it solves a narrow, well-defined task.
+- **Predictable contract**: inputs, outputs, and failure modes are explicit.
+- **No independent goals**: it acts only when an agent or human calls it.
+
+If the agent is the conductor, each tool is an instrument ready to play a known part when cued.
+
+---
+
+## How Agents and Tools Collaborate
+
+1. The agent evaluates its goal and current context.
+2. It selects a tool that can move the work forward.
+3. The tool executes, returns results, and enforces guardrails.
+4. The agent updates its understanding and loops back for the next decision.
+
+This tight feedback loop lets agents stay adaptable while tools remain dependable. It also enables humans to inspect, audit, and improve either side independently.
+
+---
+
+## Why the Separation Matters
+
+- **Modularity**: swap tools without retraining the agent to support new workflows.
+- **Safety**: tools can validate inputs, sanitize outputs, or block dangerous actions.
+- **Scale**: multiple agents can share a tool library, distributing complex work.
+- **Governance**: logs from tool calls make compliance and debugging easier.
+
+When teams blur these boundaries, they end up with brittle scripts and opaque behavior. Clear separation keeps systems maintainable as they grow.
+
+---
+
+## Putting the Model Into Practice
+
+Inventory your current AI projects and ask two questions: Who is acting as the agent, and what tools are they allowed to use? The answers will expose missing capabilities, risky shortcuts, and opportunities to harden your stack—one agent decision and one tool at a time.
