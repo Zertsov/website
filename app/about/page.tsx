@@ -9,10 +9,6 @@ import { Container } from '@/components/Container'
 import { GitHubIcon, LinkedInIcon, TwitterIcon } from '@/components/SocialIcons'
 import portraitImage from '@/images/photos/bucket.jpg'
 
-function showTesting(): boolean {
-  return process.env.NEXT_PUBLIC_CUSTOM_ENV_TESTING === '1'
-}
-
 type SocialLinkProps = {
   className?: string
   href: string
@@ -52,13 +48,13 @@ function MailIcon(props: ComponentProps<'svg'>) {
 }
 
 function Introduction() {
-  const work = 'Vercel'
-  const project = 'Turborepo'
+  const work = 'Clerk'
+  const project = 'AI enablement tools'
 
   return (
     <div className="lg:order-first lg:row-span-2">
       <h1 className="text-4xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100 sm:text-5xl">
-        Hey, I&apos;m {showTesting() ? 'TESTING STUFF' : 'Mitch'}
+        Hey, I&apos;m Mitch
       </h1>
       <div className="mt-6 text-base space-y-7 text-zinc-600 dark:text-zinc-400">
         <p>
@@ -71,18 +67,16 @@ function Introduction() {
         <p>
           I&apos;ve spent my career primarily writing Go services and tooling
           related to infrastructure, security, and reliability. I worked at a
-          couple of large businesses (Target, Visa, and Cloudflare), not only
-          learning how to build services and tools, but how to build them in a
-          way that <span className="italic">scales</span> to the needs of
-          businesses that size. I&apos;m now using those same skills to help{' '}
-          {`${work} `}
-          build out {` ${project}`}.
+          couple of large businesses, not only learning how to build services
+          and tools, but how to build them in a way that{' '}
+          <span className="italic">scales</span> to the needs of businesses of
+          their size. I&apos;m now using those same skills to help {work} build
+          out {project}.
         </p>
         <p>
-          I mostly use this as a way for me to test things I do at Vercel, so if
+          I mostly use this as a way for me to test things I do at {work}, so if
           you see broken stuff, assume it&apos;s on purpose.
         </p>
-        {/* Add more p tags here */}
       </div>
     </div>
   )
@@ -123,19 +117,12 @@ function SocialLinks() {
 
 export const metadata: Metadata = {
   title: 'About - Mitch Vostrez',
-  description: "I'm Mitch Vostrez, a software engineer at Vercel.",
+  description: "I'm Mitch Vostrez, a software engineer at Clerk.",
 }
 
 export default function About() {
   return (
     <>
-      {/* <Head>
-        <title>About - Mitch Vostrez</title>
-        <meta
-          name="description"
-          content="I’m Mitch Vostrez, a software engineer at Vercel."
-        />
-      </Head> */}
       <Container className="mt-16 sm:mt-32">
         <div className="grid grid-cols-1 gap-y-16 lg:grid-cols-2 lg:grid-rows-[auto_1fr] lg:gap-y-12">
           <div className="lg:pl-20">

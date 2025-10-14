@@ -81,13 +81,19 @@ type ResumeItem = {
 function Resume() {
   const resume: ResumeItem[] = [
     {
-      company: 'Vercel',
-      title: 'Software Engineer',
-      start: '2023',
+      company: 'Clerk',
+      title: 'Senior Software Engineer',
+      start: '2025',
       end: {
         label: 'Present',
         dateTime: new Date().getFullYear(),
       },
+    },
+    {
+      company: 'Vercel',
+      title: 'Software Engineer',
+      start: '2023',
+      end: '2025'
     },
     {
       company: 'Cloudflare',
@@ -206,7 +212,7 @@ function Photos() {
 export const metadata: Metadata = {
   title: 'Mitch Vostrez - Software engineer.',
   description:
-    "I'm Mitch, a software engineer based in Austin. A worldwide traveler and Chiefs fan, just making cool and fun software at Vercel.",
+    "I'm Mitch, a software engineer based in Austin. A worldwide traveler and Chiefs fan, making AI love Clerk.",
 }
 
 export default async function Home() {
@@ -225,20 +231,12 @@ export default async function Home() {
             Hey, I’m Mitch, a software engineer based in Austin. I work at{' '}
             <Link
               className="underline underline-offset-4"
-              href={'http://www.vercel.com'}
+              href={'http://www.clerk.dev'}
               target="_blank"
             >
-              ▲ Vercel
+              Clerk
             </Link>
-            , helping build{' '}
-            <Link
-              className="underline underline-offset-4"
-              href={'http://turbo.build/repo'}
-              target="_blank"
-            >
-              Turborepo
-            </Link>{' '}
-            and Custom Environments , along with a bunch of other tools.
+            , helping build tooling to help AI use Clerk the best way possible.
           </p>
           <div className="flex gap-6 mt-6">
             <SocialLink
