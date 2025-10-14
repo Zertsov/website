@@ -1,5 +1,4 @@
 import clsx from 'clsx'
-// import Head from 'next/head'
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
