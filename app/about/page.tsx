@@ -72,10 +72,6 @@ function Introduction() {
           their size. I&apos;m now using those same skills to help {work} build
           out {project}.
         </p>
-        <p>
-          I mostly use this as a way for me to test things I do at {work}, so if
-          you see broken stuff, assume it&apos;s on purpose.
-        </p>
       </div>
     </div>
   )
