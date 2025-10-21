@@ -1,0 +1,228 @@
+import { ArticleLayout } from '@/components/ArticleLayout'
+
+export const meta = {
+  author: 'Mitch Vostrez',
+  date: '2025-10-21',
+  title: 'A tiny wt helper for git worktrees',
+  description:
+    'A shell function that wraps git worktree so I can spin up, list, and clean worktrees without thinking about paths.',
+  tags: ['git', 'shell']
+}
+
+export default (props) => <ArticleLayout meta={meta} {...props} />
+
+`git worktree` is one of those great commands with a clunky interface. I reach for it
+constantly, so I wrapped the basics into a single shell function named `wt`. It gives
+me a small command palette for worktrees: list what exists, create new ones from local
+or remote branches, prune dangling directories, and tear things down when I'm done.
+
+Here's the full function:
+
+```bash
+wt () {
+  if [[ "$1" == "help" || "$1" == "--help" || "$1" == "" ]]
+  then
+    cat <<'EOF'
+Usage: wt <command> [options]
+Commands:
+  list|ls                    Show active worktrees
+  add|new [-b base] [path]   Add a worktree for <branch>; defaults path to ../<repo>-<branch>
+  remove|rm <path|branch>    Remove a worktree by path or branch name
+  prune                      Run git worktree prune
+Examples:
+  wt list
+  wt add feature/login
+  wt add -b main feature/login ../product-site-login
+  wt remove feature/login
+EOF
+    return 0
+  fi
+  local subcommand=$1 
+  shift
+  if ! git rev-parse --is-inside-work-tree > /dev/null 2>&1
+  then
+    echo "wt: run inside a git repository" >&2
+    return 1
+  fi
+  local repo_root
+  repo_root=$(git rev-parse --show-toplevel 2>/dev/null)  || return 1
+  local repo_name
+  repo_name=$(basename "$repo_root") 
+  case "$subcommand" in
+    (list | ls) git worktree list "$@" ;;
+    (add | new) local branch="" 
+      local target_path="" 
+      local base_branch="" 
+      while [[ $# -gt 0 ]]
+      do
+        case "$1" in
+          (-b | --base) base_branch=$2 
+            shift 2 ;;
+          (-p | --path) target_path=$2 
+            shift 2 ;;
+          (--help | -h) wt help
+            return 0 ;;
+          (*) if [[ -z "$branch" ]]
+            then
+              branch=$1 
+            elif [[ -z "$target_path" ]]
+            then
+              target_path=$1 
+            else
+              echo "wt add: unexpected argument '$1'" >&2
+              return 1
+            fi
+            shift
+            continue ;;
+        esac
+      done
+      if [[ -z "$branch" ]]
+      then
+        echo "wt add: branch name required" >&2
+        return 1
+      fi
+      local sanitized_branch=${branch//\//-} 
+      if [[ -z "$target_path" ]]
+      then
+        target_path="$(dirname "$repo_root")/${repo_name}-${sanitized_branch}" 
+      fi
+      if git show-ref --verify --quiet "refs/heads/$branch"
+      then
+        git worktree add "$target_path" "$branch"
+        return $?
+      fi
+      if git show-ref --verify --quiet "refs/remotes/origin/$branch"
+      then
+        git worktree add --track -b "$branch" "$target_path" "origin/$branch"
+        return $?
+      fi
+      if [[ -n "$base_branch" ]]
+      then
+        git worktree add -b "$branch" "$target_path" "$base_branch"
+        return $?
+      fi
+      echo "wt add: branch '$branch' not found. Use --base <existing-branch> to create it." >&2
+      return 1 ;;
+    (remove | rm) if [[ $# -eq 0 ]]
+      then
+        echo "wt remove: provide a path or branch name" >&2
+        return 1
+      fi
+      local input=$1 
+      local target="" 
+      if [[ -d "$input" ]]
+      then
+        target=$input 
+      else
+        target=$(git worktree list --porcelain | awk -v branch="$input" '
+                    /^worktree / {w=$2}
+                    /^branch / {
+                        b=$2
+                        sub(/^refs\/heads\//,"",b)
+                        if (b == branch) {
+                            print w
+                            exit
+                        }
+                    }
+                ') 
+        if [[ -z "$target" ]]
+        then
+          local guess="$(dirname "$repo_root")/${repo_name}-${input//\//-}" 
+          if [[ -d "$guess" ]]
+          then
+            target=$guess 
+          fi
+        fi
+      fi
+      if [[ -z "$target" ]]
+      then
+        echo "wt remove: unable to resolve worktree for '$input'" >&2
+        return 1
+      fi
+      git worktree remove "$target" ;;
+    (prune) git worktree prune "$@" ;;
+    (*) echo "wt: unknown command '$subcommand'. See 'wt help'." >&2
+      return 1 ;;
+  esac
+}
+```
+
+Copy it into your shell config, tweak the defaults, and you get a friendly front end for a
+powerful Git feature.
+
+I use this function all day, since my workflows now increasingly involve using AI. I want `git` to be 
+something I don't think about. It's a necessary tool to do my job, it shouldn't be a hinderance to getting
+said work done. This handy function does a few things for me:
+
+- Detects whether the branch already exists locally or on `origin` and picks the right `git worktree add` flags.  
+- Creates a predictable directory name (`../<repo>-<branch>`) when I don't care where the worktree lives.  
+- Lets me seed a brand-new branch off a base branch with `wt add -b main feature/login`.  
+- Resolves worktrees by branch name or path when removing, so I can run `wt rm feature/login` without hunting for the folder.
+
+A very common workflow for me looks like this:
+
+```bash
+# First, move into wherever I keep my git managed code. For example, this website.
+cd ~/git/website
+
+# Start a branch from main and keep the directory name tidy
+wt add -b main worktree-post ../web-worktree-post
+
+# Now, we go into that worktree to begin work, likely in another terminal tab
+cd ../web-worktree-post
+
+# Clean out a worktree once the branch is merged
+wt rm worktree-post
+
+# Occasionally clear dangling entries
+wt prune
+```
+
+It saves just enough friction that I actually reach for worktrees during day-to-day
+work, especially when juggling multiple fixes or pairing with an AI agent. If you want
+more context on why worktrees pair nicely with AI-driven development, I wrote about the
+pattern in [`AI is better with git worktrees`](/articles/ai/efficient-git).
+
+### Stacking PRs is alive and well
+
+Stacked pull requests rely on keeping several branches alive at once—each built on top of the
+previous layer. [Graphite](https://graphite.dev/) popularized the idea for me, but their tooling
+leans on a single working tree.
+Because I now use worktrees all the time, I found myself missing stacked PRs.
+Thankfully, we can still have a semblance of them by implementing it ourselves.
+`wt` keeps the process low-effort: spin up `wt add -b main feature/base`, build the next layer with
+`wt add feature/base feature/forms`, and you get separate directories where each patch stays
+focused. When it’s time to tidy up, `wt rm feature/forms` and friends make the cleanup just as
+quick.
+
+The other way I look at it is that each worktree is a parallel workstream. Maybe I need to
+implement a new API endpoint that's somewhat complex. I'd create a worktree, like
+
+```bash
+cd ~/git/website
+wt add -b main api ../web-api
+cd ../web-api
+```
+
+At this point, you can actually keep it extra simple - just start checking out branches in the worktree.
+With stacked PRs, we want our work to have parent branches. Doing this without Graphite sounds a bit tedious,
+but it's actually pretty simple. Using basic `git` commands, we'd start creating branches, and then
+rebasing to create the stack we want. But there's actually an easier way...
+
+An often overlooked parameter of `git checkout` is that after the `-b` flag, you normally pass the
+branch name. Did you know you can also pass a parent branch name?
+
+```bash
+# ~/git/website - branch api
+git add -A # Add the files for this PR
+# Do a commit and push
+git commit -m "< insert message >" && git push
+
+# This creates a new branch `authorization` in the worktree, with `api` as the parent.
+git checkout -b authorization api
+
+# Continue working
+```
+
+And there you have it. Worktrees with stackable PRs. Now you can have AI working on two stacks of PRs at once
+-happy coding.
