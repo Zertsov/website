@@ -11,12 +11,12 @@ export const meta = {
 
 export default (props) => <ArticleLayout meta={meta} {...props} />
 
-`git worktree` is one of those great commands with a clunky interface. I reach for it
-constantly, so I wrapped the basics into a single shell function named `wt`. It gives
-me a small command palette for worktrees: list what exists, create new ones from local
-or remote branches, prune dangling directories, and tear things down when I'm done.
+`git worktree` is powerful—and a little clunky. I use it constantly, so I wrapped the day‑to‑day
+into a tiny shell function named `wt`. Think of it as a small command palette for worktrees:
+list what exists, create new ones from local or remote branches, seed a fresh branch from a base,
+prune dangling directories, and tear things down when I’m done.
 
-Here's the full function:
+Here’s the function:
 
 ```bash
 wt () {
@@ -147,28 +147,30 @@ EOF
 }
 ```
 
-Copy it into your shell config, tweak the defaults, and you get a friendly front end for a
-powerful Git feature.
+Drop it into your shell config and tweak to taste. Now you’ve got a friendly front end
+for a very capable Git feature.
 
-I use this function all day, since my workflows now increasingly involve using AI. I want `git` to be 
-something I don't think about. It's a necessary tool to do my job, it shouldn't be a hinderance to getting
-said work done. This handy function does a few things for me:
+I use `wt` all day—especially as more of my workflow involves AI. I want `git` to be
+something I don’t think about. This little wrapper helps by:
 
-- Detects whether the branch already exists locally or on `origin` and picks the right `git worktree add` flags.  
-- Creates a predictable directory name (`../<repo>-<branch>`) when I don't care where the worktree lives.  
-- Lets me seed a brand-new branch off a base branch with `wt add -b main feature/login`.  
-- Resolves worktrees by branch name or path when removing, so I can run `wt rm feature/login` without hunting for the folder.
+- Detecting whether a branch exists locally or on `origin` and choosing the right
+  `git worktree add` flags.
+- Creating a predictable directory name (`../<repo>-<branch>`) when I don’t care
+  where the worktree lives.
+- Seeding a brand‑new branch off a base branch with `wt add -b main feature/login`.
+- Resolving worktrees by branch name or path when removing, so `wt rm feature/login`
+  just works.
 
-A very common workflow for me looks like this:
+### A quick workflow
 
 ```bash
-# First, move into wherever I keep my git managed code. For example, this website.
+# Move into a repo (this site, for example)
 cd ~/git/website
 
 # Start a branch from main and keep the directory name tidy
 wt add -b main worktree-post ../web-worktree-post
 
-# Now, we go into that worktree to begin work, likely in another terminal tab
+# Switch into that worktree (often in a second terminal tab)
 cd ../web-worktree-post
 
 # Clean out a worktree once the branch is merged
@@ -178,25 +180,25 @@ wt rm worktree-post
 wt prune
 ```
 
-It saves just enough friction that I actually reach for worktrees during day-to-day
-work, especially when juggling multiple fixes or pairing with an AI agent. If you want
-more context on why worktrees pair nicely with AI-driven development, I wrote about the
-pattern in [`AI is better with git worktrees`](/articles/ai/efficient-git).
+It removes just enough friction that I actually use worktrees during day‑to‑day work—
+especially when juggling multiple fixes or pairing with an AI agent. For more on why
+worktrees pair nicely with AI‑driven development, see
+[`AI is better with git worktrees`](/articles/ai/efficient-git).
 
-### Stacking PRs is alive and well
+### Stacked PRs without extra tooling
 
-Stacked pull requests rely on keeping several branches alive at once—each built on top of the
-previous layer. [Graphite](https://graphite.dev/) popularized the idea for me, but their tooling
-leans on a single working tree.
-Because I now use worktrees all the time, I found myself missing stacked PRs.
-Thankfully, we can still have a semblance of them by implementing it ourselves.
-`wt` keeps the process low-effort: spin up `wt add -b main feature/base`, build the next layer with
-`wt add feature/base feature/forms`, and you get separate directories where each patch stays
-focused. When it’s time to tidy up, `wt rm feature/forms` and friends make the cleanup just as
-quick.
+Stacked pull requests keep several branches alive at once—each built on top of the
+previous layer. [Graphite](https://graphite.dev/) popularized the idea for me, but it
+leans on a single working tree. If you live in worktrees, you can approximate the
+workflow yourself.
 
-The other way I look at it is that each worktree is a parallel workstream. Maybe I need to
-implement a new API endpoint that's somewhat complex. I'd create a worktree, like
+With `wt`, it stays low‑effort: spin up `wt add -b main feature/base`, build the next
+layer with `wt add feature/base feature/forms`, and you get separate directories where
+each patch stays focused. When it’s time to tidy up, `wt rm feature/forms` and friends
+make cleanup just as quick.
+
+Another way to think about it: each worktree is a parallel workstream. If I’m building
+a new API endpoint, I might do:
 
 ```bash
 cd ~/git/website
@@ -204,25 +206,25 @@ wt add -b main api ../web-api
 cd ../web-api
 ```
 
-At this point, you can actually keep it extra simple - just start checking out branches in the worktree.
-With stacked PRs, we want our work to have parent branches. Doing this without Graphite sounds a bit tedious,
-but it's actually pretty simple. Using basic `git` commands, we'd start creating branches, and then
-rebasing to create the stack we want. But there's actually an easier way...
+From here you can keep it simple—just start checking out branches in the worktree. For
+stacked PRs, we want child branches. That sounds tedious without Graphite, but there’s
+a very handy Git trick…
 
-An often overlooked parameter of `git checkout` is that after the `-b` flag, you normally pass the
-branch name. Did you know you can also pass a parent branch name?
+### Tip: make a child branch in place
+
+After `-b`, `git checkout` accepts a start‑point. Passing the parent branch creates the
+child at the right base:
 
 ```bash
-# ~/git/website - branch api
-git add -A # Add the files for this PR
-# Do a commit and push
-git commit -m "< insert message >" && git push
+# ~/git/website — currently on branch `api`
+git add -A
+git commit -m "<insert message>" && git push
 
-# This creates a new branch `authorization` in the worktree, with `api` as the parent.
+# Create a new branch `authorization` with `api` as the parent
 git checkout -b authorization api
 
-# Continue working
+# Continue working - now on branch `authorization`
 ```
 
-And there you have it. Worktrees with stackable PRs. Now you can have AI working on two stacks of PRs at once
--happy coding.
+That’s it: worktrees with stackable PRs. You can keep multiple patch stacks moving in
+parallel—human and AI included. Happy shipping.
