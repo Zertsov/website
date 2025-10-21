@@ -9,6 +9,11 @@ export const meta = {
   tags: ['git', 'shell']
 }
 
+export const metadata = {
+  title: meta.title,
+  description: meta.description,
+}
+
 export default (props) => <ArticleLayout meta={meta} {...props} />
 
 `git worktree` is powerful—and a little clunky. I use it constantly, so I wrapped the day‑to‑day

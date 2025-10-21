@@ -8,6 +8,11 @@ export const meta = {
   tags: ['git']
 }
 
+export const metadata = {
+  title: meta.title,
+  description: meta.description,
+}
+
 export default (props) => <ArticleLayout meta={meta} {...props} />
 
 When I’m debugging or exploring an issue, I often need quick, localized notes. Traditional note-taking apps like Notion work well for planning and long-term organization, but they don’t fit my workflow when I’m deep in the editor. I want notes tied directly to the branch I’m working on—without committing them to the repo or upstream.
