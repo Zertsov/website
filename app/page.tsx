@@ -93,7 +93,7 @@ function Resume() {
       company: 'Vercel',
       title: 'Software Engineer',
       start: '2023',
-      end: '2025'
+      end: '2025',
     },
     {
       company: 'Cloudflare',

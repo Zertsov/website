@@ -1,6 +1,6 @@
 // import Head from 'next/head'
 
-import { getAllArticles, type ArticleMeta } from 'lib/getAllArticles'
+import { type ArticleMeta, getAllArticles } from 'lib/getAllArticles'
 import type { Metadata } from 'next'
 import { SimpleLayout } from '@/components/SimpleLayout'
 import { ArticlesList } from './ArticlesList'

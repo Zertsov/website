@@ -1,9 +1,9 @@
+import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import type { Metadata } from 'next'
 import { ClientLayout } from '@/components/ClientLayout'
 import { Footer } from '@/components/Footer'
 import { Header } from '@/components/Header'
-
 import '@/styles/tailwind.css'
 import 'focus-visible'
 
@@ -72,6 +72,7 @@ export default function RootLayout({
           <main>
             <ClientLayout>{children}</ClientLayout>
             <SpeedInsights />
+            <Analytics />
           </main>
           <Footer />
         </div>

@@ -1,9 +1,9 @@
 'use client'
 
-import { useId, useMemo, useState } from 'react'
+import { formatDate } from 'lib/formatDate'
 
 import type { ArticleMeta } from 'lib/getAllArticles'
-import { formatDate } from 'lib/formatDate'
+import { useId, useMemo, useState } from 'react'
 
 import { Card } from '@/components/Card'
 
@@ -76,7 +76,9 @@ export function ArticlesList({ articles }: ArticlesListProps) {
             id={selectId}
             value={selectedTag ?? ''}
             onChange={(event) =>
-              setSelectedTag(event.target.value === '' ? null : event.target.value)
+              setSelectedTag(
+                event.target.value === '' ? null : event.target.value
+              )
             }
             className="rounded-md border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
           >
