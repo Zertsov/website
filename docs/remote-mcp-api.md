@@ -10,6 +10,8 @@ This project now exposes a tiny JSON API and a matching set of MCP-aware endpoin
 | `/api/remote-example` | `POST` | Build a short planning checklist for a provided topic. |
 | `/api/mcp/tools` | `GET` | List Tool descriptors that adhere to the MCP schema. |
 | `/api/mcp/run` | `POST` | Invoke a tool and receive MCP-compatible content. |
+| `/api/articles` | `GET` | List all available articles with metadata. |
+| `/api/articles/[slug]` | `GET` | Get a specific article as markdown by slug. |
 
 ## JSON example
 
@@ -64,3 +66,47 @@ Example success response:
 ```
 
 Error responses set `isError: true` and use HTTP status `400`, which mirrors the contract expected by remote MCP clients.
+
+## Articles API
+
+List all available articles:
+
+```bash
+curl http://localhost:3000/api/articles
+```
+
+Sample response:
+
+```json
+{
+  "articles": [
+    {
+      "slug": "ai/agents-and-tools",
+      "author": "Mitch Vostrez",
+      "date": "2025-07-06",
+      "title": "Understanding AI Agents and Their Tools",
+      "description": "Clarify how AI agents decide what to do and the role tools play in executing their plans.",
+      "tags": ["ai", "agents", "tools"]
+    }
+  ],
+  "count": 1
+}
+```
+
+Get a specific article as markdown:
+
+```bash
+curl http://localhost:3000/api/articles/ai/agents-and-tools
+```
+
+Sample response:
+
+```json
+{
+  "slug": "ai/agents-and-tools",
+  "markdown": "# Agents and Tools: Building Blocks of Modern AI Workflows\n\nAI conversations often mix up...",
+  "format": "markdown"
+}
+```
+
+Error responses for missing articles return HTTP status `404` with an error message.
