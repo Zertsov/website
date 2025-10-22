@@ -40,10 +40,10 @@ async function getArticleMarkdown(slug: string): Promise<string> {
 
 export async function GET(
   _request: Request,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const slug = params.slug
+    const slug = (await params).slug
 
     if (!slug || slug.trim().length === 0) {
       return NextResponse.json(
