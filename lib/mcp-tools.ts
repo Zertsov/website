@@ -1,3 +1,6 @@
+import { readFile } from 'node:fs/promises'
+import { join } from 'node:path'
+
 type JsonSchema = {
   type: 'object'
   description?: string
@@ -83,7 +86,53 @@ const tools: McpTool[] = [
       required: ['topic'],
     },
   },
+  {
+    name: 'get-article',
+    description: 'Get an article by slug',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        slug: {
+          type: 'string',
+          description: 'The slug of the article to get.',
+        },
+      },
+      required: ['slug'],
+    },
+  }
 ]
+
+async function getArticleMarkdown(slug: string): Promise<string> {
+  // Construct the path to the article MDX file
+  const articlePath = join(process.cwd(), 'app/articles', `${slug}/page.mdx`)
+  
+  try {
+    const content = await readFile(articlePath, 'utf-8')
+    
+    // Extract markdown content (skip imports and metadata)
+    // Find where the actual markdown starts (after the last export statement)
+    const lines = content.split('\n')
+    let markdownStartIndex = 0
+    
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i].trim()
+      // Skip empty lines, imports, and exports
+      if (line.startsWith('import ') || 
+          line.startsWith('export ') || 
+          line === '' ||
+          line === '}') {
+        markdownStartIndex = i + 1
+      } else {
+        // Found the start of markdown content
+        break
+      }
+    }
+    
+    return lines.slice(markdownStartIndex).join('\n').trim()
+  } catch (error) {
+    throw new Error(`Failed to read article "${slug}": ${error instanceof Error ? error.message : 'Unknown error'}`)
+  }
+}
 
 const toolHandlers: Record<string, ToolHandler> = {
   echo: async (args) => {
@@ -133,6 +182,13 @@ const toolHandlers: Record<string, ToolHandler> = {
     return {
       content: [{ type: 'text', text: summary }],
     }
+  },
+  'get-article': async (args) => {
+    const slug = expectString(args.slug, 'slug')
+    const markdown = await getArticleMarkdown(slug)
+    return {
+      content: [{ type: 'text', text: markdown }],
+    } 
   },
 }
 
