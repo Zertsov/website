@@ -1,0 +1,174 @@
+import { ArticleLayout } from '@/components/ArticleLayout'
+
+export const meta = {
+  author: 'Mitch Vostrez',
+  date: '2025-11-18',
+  title: 'How OAuth works (with real-world examples)',
+  description:
+    'A practical walkthrough of OAuth: the main actors, the authorization code flow, and how access and refresh tokens keep the party going.',
+  tags: ['oauth', 'security', 'web'],
+}
+
+export const metadata = {
+  title: meta.title,
+  description: meta.description,
+}
+
+export default (props) => <ArticleLayout meta={meta} {...props} />
+
+Lately I've been working on some things related to API keys and OAuth. While API keys are (normally) straightforward,
+every time I have to work with OAuth, I remember trying to learn about it for the first time, and how confusing it was.
+
+OAuth is the protocol that lets your app borrow someone else’s audience-securely. It powers the
+“Continue with Google” button just as much as your payroll service uploading receipts to your bank.
+It’s deceptively simple at the surface (“click yes”) and tricky under the hood. Let’s break it down
+in plain language, then walk through the most common flow with concrete requests.
+
+## The problem OAuth solves
+
+Before OAuth, the way to get data from another service was to ask for a password and reuse it.
+That gave your app full access forever-terrible for users and providers. OAuth introduces scoped,
+revocable access tokens. Users choose when and how long an app can work with their data, and they
+never share their password with you.
+
+## Meet the cast
+
+When people say “OAuth,” they’re usually talking about four roles:
+
+- **Resource owner** – the human who controls the data (you).
+- **Client** – the app that wants access (my meeting planner).
+- **Authorization server** – the service that verifies the human and issues tokens (accounts.google.com).
+- **Resource server** – the API that holds the data (Google Calendar API).
+
+The authorization and resource servers often live under the same provider, but you can think of them
+as two different hats.
+
+## A real example: my meeting planner + Google Calendar
+
+Say I’m building a meeting planner that needs to read a user’s free/busy slots from Google Calendar.
+The high-level dance looks like this:
+
+1. My app sends the user to Google’s consent screen, asking for the `https://www.googleapis.com/auth/calendar.readonly` scope.
+2. Google signs the user in, shows the requested scope, and asks for approval.
+3. Google sends my app a short-lived authorization code.
+4. My backend trades that code for tokens.
+5. I call the Calendar API with the access token, refreshing when it expires.
+
+Everything after step 3 must happen on the server (or a full native app). That’s where the tokens stay safe.
+
+## Step-by-step: Authorization Code + PKCE
+
+This is the Swiss-army-knife flow: it works for web apps, mobile apps, and SPAs, especially when you bolt
+on PKCE (Proof Key for Code Exchange) to protect against intercepted codes.
+
+### 1. Prepare a code verifier + challenge
+
+```bash
+# Pseudocode — do this in your app, not on the command line.
+code_verifier = base64url(random(32 bytes))
+code_challenge = base64url(SHA256(code_verifier))
+```
+
+Hold on to both. The verifier stays secret; the challenge goes to Google.
+
+### 2. Redirect the user
+
+```http
+GET https://accounts.google.com/o/oauth2/v2/auth?
+  client_id=YOUR_CLIENT_ID&
+  redirect_uri=https://app.example.com/oauth/google/callback&
+  response_type=code&
+  scope=https://www.googleapis.com/auth/calendar.readonly&
+  code_challenge=CODE_CHALLENGE&
+  code_challenge_method=S256&
+  state=RANDOM_CSRF_TOKEN
+```
+
+`state` is your CSRF shield—store it in a cookie or session and verify it later.
+
+### 3. Handle the callback
+
+The user approves, Google sends them back to your redirect URI:
+
+```http
+GET /oauth/google/callback?code=AUTH_CODE&state=RANDOM_CSRF_TOKEN
+```
+
+Verify `state` and move the `code` to your backend.
+
+### 4. Exchange the code for tokens
+
+```http
+POST https://oauth2.googleapis.com/token
+Content-Type: application/x-www-form-urlencoded
+
+client_id=YOUR_CLIENT_ID&
+client_secret=YOUR_CLIENT_SECRET&
+code=AUTH_CODE&
+code_verifier=CODE_VERIFIER&
+grant_type=authorization_code&
+redirect_uri=https://app.example.com/oauth/google/callback
+```
+
+You’ll get a JSON payload with an `access_token`, an `expires_in` (usually ~3600 seconds), a `refresh_token`
+for later, and a `scope` echo.
+
+### 5. Call the resource server
+
+```http
+GET https://www.googleapis.com/calendar/v3/freeBusy
+Authorization: Bearer ACCESS_TOKEN
+Content-Type: application/json
+
+{
+  "items": [{ "id": "primary" }],
+  "timeMin": "2025-11-18T12:00:00Z",
+  "timeMax": "2025-11-19T12:00:00Z"
+}
+```
+
+If the token is valid and the scope matches, you get the user’s free/busy blocks back. If you receive a
+401 with an `invalid_token` error, refresh the token and retry.
+
+### 6. Refresh when the access token expires
+
+```http
+POST https://oauth2.googleapis.com/token
+Content-Type: application/x-www-form-urlencoded
+
+client_id=YOUR_CLIENT_ID&
+client_secret=YOUR_CLIENT_SECRET&
+refresh_token=REFRESH_TOKEN&
+grant_type=refresh_token
+```
+
+Store the new access token (and refresh token if it rotates) atomically. Retrying without rotation
+logic is the fastest way to strand users.
+
+## Other core flows
+
+Once the authorization code flow clicks, the rest are variations on the same idea:
+
+- **Client Credentials** – No user, just your backend talking to another backend. Use it for service-to-service calls where your app owns the data.
+- **Device Code** – For TVs or CLI tools. The user types a short code on a browser while the device polls for completion.
+- **Implicit** – Legacy browser-only flow that skips the code exchange. Modern providers nudge you away from it in favor of PKCE.
+
+## Access tokens vs. ID tokens
+
+Providers like Google and Microsoft mint both. Quick rule:
+
+- **Access token** – Presented to APIs. Opaque to you.
+- **ID token** – A JWT with identity claims about the user. Use it to personalize UI, not to call APIs.
+
+Never trust an ID token alone for authorization; check scopes against the resource server instead.
+
+## Practical guardrails
+
+- **Treat tokens like passwords.** Keep them server-side, encrypt at rest, and scope your database access.
+- **Know your scopes.** Request the least privilege (read vs. read/write) and document why each scope exists.
+- **Test with real providers.** Sandbox environments (Google, Microsoft, GitHub) behave slightly differently. Script the full flow so you can rerun it after configuration changes.
+- **Plan revocation UX.** Users should see which apps are connected and revoke with one click. Your app should handle revoked refresh tokens gracefully.
+
+OAuth can feel like ceremony until you see the shape. Once you understand the cast, the code exchange,
+and the difference between access and refresh tokens, you can plug any provider into your app with confidence—
+and without asking for anyone’s password.
