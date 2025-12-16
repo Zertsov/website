@@ -34,10 +34,10 @@ dependencies:
     version: 2.0.13
   '@vercel/analytics':
     specifier: ^1.5.0
-    version: 1.5.0(next@15.5.7)(react@19.0.0-rc-02c0e824-20241028)
+    version: 1.5.0(next@15.5.9)(react@19.0.0-rc-02c0e824-20241028)
   '@vercel/speed-insights':
     specifier: ^1.0.2
-    version: 1.2.0(next@15.5.7)(react@19.0.0-rc-02c0e824-20241028)
+    version: 1.2.0(next@15.5.9)(react@19.0.0-rc-02c0e824-20241028)
   autoprefixer:
     specifier: ^10.4.16
     version: 10.4.16(postcss@8.5.6)
@@ -60,8 +60,8 @@ dependencies:
     specifier: ^0.525.0
     version: 0.525.0(react@19.0.0-rc-02c0e824-20241028)
   next:
-    specifier: 15.5.7
-    version: 15.5.7(react-dom@19.0.0-rc-02c0e824-20241028)(react@19.0.0-rc-02c0e824-20241028)
+    specifier: 15.5.9
+    version: 15.5.9(react-dom@19.0.0-rc-02c0e824-20241028)(react@19.0.0-rc-02c0e824-20241028)
   postcss-focus-visible:
     specifier: ^6.0.4
     version: 6.0.4(postcss@8.5.6)
@@ -562,8 +562,8 @@ packages:
       react: 19.0.0-rc-02c0e824-20241028
     dev: false
 
-  /@next/env@15.5.7:
-    resolution: {integrity: sha512-4h6Y2NyEkIEN7Z8YxkA27pq6zTkS09bUSYC0xjd0NpwFxjnIKeZEeH591o5WECSmjpUhLn3H2QLJcDye3Uzcvg==}
+  /@next/env@15.5.9:
+    resolution: {integrity: sha512-4GlTZ+EJM7WaW2HEZcyU317tIQDjkQIyENDLxYJfSWlfqguN+dHkZgyQTV/7ykvobU7yEH5gKvreNrH4B6QgIg==}
     dev: false
 
   /@next/mdx@15.5.7(@mdx-js/loader@3.1.1)(@mdx-js/react@3.1.1):
@@ -1050,7 +1050,7 @@ packages:
     resolution: {integrity: sha512-WmoN8qaIAo7WTYWbAZuG8PYEhn5fkz7dZrqTBZ7dtt//lL2Gwms1IcnQ5yHqjDfX8Ft5j4YzDM23f87zBfDe9g==}
     dev: false
 
-  /@vercel/analytics@1.5.0(next@15.5.7)(react@19.0.0-rc-02c0e824-20241028):
+  /@vercel/analytics@1.5.0(next@15.5.9)(react@19.0.0-rc-02c0e824-20241028):
     resolution: {integrity: sha512-MYsBzfPki4gthY5HnYN7jgInhAZ7Ac1cYDoRWFomwGHWEX7odTEzbtg9kf/QSo7XEsEAqlQugA6gJ2WS2DEa3g==}
     peerDependencies:
       '@remix-run/react': ^2
@@ -1076,11 +1076,11 @@ packages:
       vue-router:
         optional: true
     dependencies:
-      next: 15.5.7(react-dom@19.0.0-rc-02c0e824-20241028)(react@19.0.0-rc-02c0e824-20241028)
+      next: 15.5.9(react-dom@19.0.0-rc-02c0e824-20241028)(react@19.0.0-rc-02c0e824-20241028)
       react: 19.0.0-rc-02c0e824-20241028
     dev: false
 
-  /@vercel/speed-insights@1.2.0(next@15.5.7)(react@19.0.0-rc-02c0e824-20241028):
+  /@vercel/speed-insights@1.2.0(next@15.5.9)(react@19.0.0-rc-02c0e824-20241028):
     resolution: {integrity: sha512-y9GVzrUJ2xmgtQlzFP2KhVRoCglwfRQgjyfY607aU0hh0Un6d0OUyrJkjuAlsV18qR4zfoFPs/BiIj9YDS6Wzw==}
     requiresBuild: true
     peerDependencies:
@@ -1104,7 +1104,7 @@ packages:
       vue-router:
         optional: true
     dependencies:
-      next: 15.5.7(react-dom@19.0.0-rc-02c0e824-20241028)(react@19.0.0-rc-02c0e824-20241028)
+      next: 15.5.9(react-dom@19.0.0-rc-02c0e824-20241028)(react@19.0.0-rc-02c0e824-20241028)
       react: 19.0.0-rc-02c0e824-20241028
     dev: false
 
@@ -3294,8 +3294,8 @@ packages:
     hasBin: true
     dev: false
 
-  /next@15.5.7(react-dom@19.0.0-rc-02c0e824-20241028)(react@19.0.0-rc-02c0e824-20241028):
-    resolution: {integrity: sha512-+t2/0jIJ48kUpGKkdlhgkv+zPTEOoXyr60qXe68eB/pl3CMJaLeIGjzp5D6Oqt25hCBiBTt8wEeeAzfJvUKnPQ==}
+  /next@15.5.9(react-dom@19.0.0-rc-02c0e824-20241028)(react@19.0.0-rc-02c0e824-20241028):
+    resolution: {integrity: sha512-agNLK89seZEtC5zUHwtut0+tNrc0Xw4FT/Dg+B/VLEo9pAcS9rtTKpek3V6kVcVwsB2YlqMaHdfZL4eLEVYuCg==}
     engines: {node: ^18.18.0 || ^19.8.0 || >= 20.0.0}
     hasBin: true
     peerDependencies:
@@ -3315,7 +3315,7 @@ packages:
       sass:
         optional: true
     dependencies:
-      '@next/env': 15.5.7
+      '@next/env': 15.5.9
       '@swc/helpers': 0.5.15
       caniuse-lite: 1.0.30001741
       postcss: 8.4.31
