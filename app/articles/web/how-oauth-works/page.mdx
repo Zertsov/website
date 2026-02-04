@@ -3,9 +3,9 @@ import { ArticleLayout } from '@/components/ArticleLayout'
 export const meta = {
   author: 'Mitch Vostrez',
   date: '2025-10-30',
-  title: 'How OAuth works (with real-world examples)',
+  title: 'OAuth in Practice: voz.dev + Third-Party Integration',
   description:
-    'A practical walkthrough of OAuth: the main actors, the authorization code flow, and how access and refresh tokens keep the party going.',
+    'A field guide to standing up an OAuth provider on voz.dev, registering clients, and consuming the API from a Next.js third-party app.',
   tags: ['oauth', 'security', 'web'],
 }
 
@@ -16,159 +16,375 @@ export const metadata = {
 
 export default (props) => <ArticleLayout meta={meta} {...props} />
 
-Lately I've been working on some things related to API keys and OAuth. While API keys are (normally) straightforward,
-every time I have to work with OAuth, I remember trying to learn about it for the first time, and how confusing it was.
+OAuth only made sense for me once I watched it solve a problem I actually had. This post is that problem:
+voz.dev lets people sign up and save a short “message to future you,” and we want an outside site to read
+that message _only_ when the user says so. OAuth is the bridge.
 
-OAuth is the protocol that lets your app borrow someone else’s audience-securely. It powers the
-“Continue with Google” button just as much as your payroll service uploading receipts to your bank.
-It’s deceptively simple at the surface (“click yes”) and tricky under the hood. Let’s break it down
-in plain language, then walk through the most common flow with concrete requests.
+We’ll keep everything in TypeScript-friendly Next.js land. voz.dev (this site) becomes the OAuth provider
+and resource server. The third-party app lives in `~/sandbox/oauth-third-party` as a vanilla Next App.
+We’ll wire up the Authorization Code flow with PKCE, scopes, refresh tokens, and the consent screen copy
+that actually tells the user what’s going on. All implementation details below assume the code will be
+filled in later—the focus here is the architecture, routes, and data you’ll need.
 
-## The problem OAuth solves
+## What we’re building
 
-Before OAuth, the way to get data from another service was to ask for a password and reuse it.
-That gave your app full access forever-terrible for users and providers. OAuth introduces scoped,
-revocable access tokens. Users choose when and how long an app can work with their data, and they
-never share their password with you.
+Picture three actors:
 
-## Meet the cast
+- **voz.dev** — both the authorization server (sign-in, consent, tokens) and the resource server (stores the message).
+- **oauth-third-party** — a separate Next.js client that wants to display the message.
+- **The user** — they own their words and must opt into sharing them.
 
-When people say “OAuth,” they’re usually talking about four roles:
+The happy path looks like this:
 
-- **Resource owner** – the human who controls the data (you).
-- **Client** – the app that wants access (my meeting planner).
-- **Authorization server** – the service that verifies the human and issues tokens (accounts.google.com).
-- **Resource server** – the API that holds the data (Google Calendar API).
+1. The user signs up on voz.dev and leaves their message.
+2. They visit oauth-third-party and click “Connect voz.dev.”
+3. We redirect the browser to voz.dev’s `/oauth/authorize` endpoint with PKCE + state in tow.
+4. The user signs in (if needed), reviews the consent screen, and approves the scope.
+5. voz.dev issues an authorization code, which oauth-third-party swaps for tokens at `/oauth/token`.
+6. oauth-third-party calls `/api/user-message` with the access token and shows the message.
+7. The access token expires; oauth-third-party uses the refresh token to grab a new one.
 
-The authorization and resource servers often live under the same provider, but you can think of them
-as two different hats.
+We’ll lay down each part in order. If you want to see it all at once, skip to the “Putting it together” section.
 
-## A real example: my meeting planner + Google Calendar
+## Step 0: Core data model on voz.dev
 
-Say I’m building a meeting planner that needs to read a user’s free/busy slots from Google Calendar.
-The high-level dance looks like this:
+voz.dev already has a user table. Add two more tables (or Prisma models):
 
-1. My app sends the user to Google’s consent screen, asking for the `https://www.googleapis.com/auth/calendar.readonly` scope.
-2. Google signs the user in, shows the requested scope, and asks for approval.
-3. Google sends my app a short-lived authorization code.
-4. My backend trades that code for tokens.
-5. I call the Calendar API with the access token, refreshing when it expires.
+```sql
+-- oauth_clients
+client_id TEXT PRIMARY KEY,
+client_name TEXT NOT NULL,
+client_secret_hash TEXT NULL, -- null means public client, PKCE only
+redirect_uris TEXT[] NOT NULL,
+scopes TEXT[] NOT NULL,
+created_at TIMESTAMP NOT NULL DEFAULT NOW()
 
-Everything after step 3 must happen on the server (or a full native app). That’s where the tokens stay safe.
-
-## Step-by-step: Authorization Code + PKCE
-
-This is the Swiss-army-knife flow: it works for web apps, mobile apps, and SPAs, especially when you bolt
-on PKCE (Proof Key for Code Exchange) to protect against intercepted codes.
-
-### 1. Prepare a code verifier + challenge
-
-```bash
-# Pseudocode — do this in your app, not on the command line.
-code_verifier = base64url(random(32 bytes))
-code_challenge = base64url(SHA256(code_verifier))
+-- oauth_authorizations
+id UUID PRIMARY KEY,
+user_id UUID NOT NULL REFERENCES users(id),
+client_id TEXT NOT NULL REFERENCES oauth_clients(client_id),
+scope TEXT[] NOT NULL,
+code TEXT UNIQUE NOT NULL,
+code_challenge TEXT NOT NULL,
+code_challenge_method TEXT NOT NULL CHECK (code_challenge_method IN ('S256')),
+expires_at TIMESTAMP NOT NULL,
+consumed_at TIMESTAMP NULL
 ```
 
-Hold on to both. The verifier stays secret; the challenge goes to Google.
+Store access and refresh tokens in a separate table (or Redis) if you want full revocation later. For this post,
+assume the token table maps `token` → `{ user_id, client_id, scope, expires_at, type }`.
 
-### 2. Redirect the user
+## Step 1: Capture the message during signup
 
-```http
-GET https://accounts.google.com/o/oauth2/v2/auth?
-  client_id=YOUR_CLIENT_ID&
-  redirect_uri=https://app.example.com/oauth/google/callback&
-  response_type=code&
-  scope=https://www.googleapis.com/auth/calendar.readonly&
-  code_challenge=CODE_CHALLENGE&
-  code_challenge_method=S256&
-  state=RANDOM_CSRF_TOKEN
-```
+The landing flow on voz.dev now collects a short blurb:
 
-`state` is your CSRF shield—store it in a cookie or session and verify it later.
+```tsx
+// app/api/register/route.ts
+export async function POST(request: NextRequest) {
+  const { email, password, message } = await request.json()
 
-### 3. Handle the callback
+  // 1. Hash the password, create the user, store the message.
+  const user = await db.user.create({
+    data: {
+      email,
+      passwordHash: await hashPassword(password),
+      message: { create: { body: message } },
+    },
+  })
 
-The user approves, Google sends them back to your redirect URI:
-
-```http
-GET /oauth/google/callback?code=AUTH_CODE&state=RANDOM_CSRF_TOKEN
-```
-
-Verify `state` and move the `code` to your backend.
-
-### 4. Exchange the code for tokens
-
-```http
-POST https://oauth2.googleapis.com/token
-Content-Type: application/x-www-form-urlencoded
-
-client_id=YOUR_CLIENT_ID&
-client_secret=YOUR_CLIENT_SECRET&
-code=AUTH_CODE&
-code_verifier=CODE_VERIFIER&
-grant_type=authorization_code&
-redirect_uri=https://app.example.com/oauth/google/callback
-```
-
-You’ll get a JSON payload with an `access_token`, an `expires_in` (usually ~3600 seconds), a `refresh_token`
-for later, and a `scope` echo.
-
-### 5. Call the resource server
-
-```http
-GET https://www.googleapis.com/calendar/v3/freeBusy
-Authorization: Bearer ACCESS_TOKEN
-Content-Type: application/json
-
-{
-  "items": [{ "id": "primary" }],
-  "timeMin": "2025-11-18T12:00:00Z",
-  "timeMax": "2025-11-19T12:00:00Z"
+  // 2. Sign the session cookie and respond.
+  return NextResponse.json({ ok: true }, { status: 201 })
 }
 ```
 
-If the token is valid and the scope matches, you get the user’s free/busy blocks back. If you receive a
-401 with an `invalid_token` error, refresh the token and retry.
+Saving the message up front gives the OAuth provider something meaningful to protect. The resource server will
+read from the `messages` table later.
 
-### 6. Refresh when the access token expires
+## Step 2: Register an OAuth client for oauth-third-party
 
-```http
-POST https://oauth2.googleapis.com/token
-Content-Type: application/x-www-form-urlencoded
+Seed a client in the database via a script or admin UI:
 
-client_id=YOUR_CLIENT_ID&
-client_secret=YOUR_CLIENT_SECRET&
-refresh_token=REFRESH_TOKEN&
-grant_type=refresh_token
+```ts
+// scripts/register-oauth-client.ts
+await prisma.oauthClient.create({
+  data: {
+    clientId: 'sandbox-third-party',
+    clientName: 'Sandbox Message Viewer',
+    clientSecretHash: hashSecret(process.env.NEW_CLIENT_SECRET!),
+    redirectUris: ['http://localhost:4000/api/auth/callback'],
+    scopes: ['message.read'],
+  },
+})
 ```
 
-Store the new access token (and refresh token if it rotates) atomically. Retrying without rotation
-logic is the fastest way to strand users.
+Drop the raw secret into your `.env.local` for oauth-third-party:
 
-## Other core flows
+```
+VOZ_CLIENT_ID=sandbox-third-party
+VOZ_CLIENT_SECRET=super-long-random-string
+VOZ_OAUTH_BASE_URL=http://localhost:3000
+```
 
-Once the authorization code flow clicks, the rest are variations on the same idea:
+By treating the Next app as a confidential client (server-side exchange), we can accept both PKCE and client secrets.
 
-- **Client Credentials** – No user, just your backend talking to another backend. Use it for service-to-service calls where your app owns the data.
-- **Device Code** – For TVs or CLI tools. The user types a short code on a browser while the device polls for completion.
-- **Implicit** – Legacy browser-only flow that skips the code exchange. Modern providers nudge you away from it in favor of PKCE.
+## Step 3: `/oauth/authorize` — redirect + consent
 
-## Access tokens vs. ID tokens
+Time to mint authorization codes. This endpoint needs to:
 
-Providers like Google and Microsoft mint both. Quick rule:
+1. Validate the incoming query (`client_id`, `redirect_uri`, `scope`, `response_type=code`, `code_challenge`, `state`).
+2. Prompt the user to sign in if they’re not already.
+3. Show a consent screen summarizing the scope (e.g. “Read your saved voz.dev message”).
+4. On approval, persist an authorization record and redirect back with `?code=...&state=...`.
 
-- **Access token** – Presented to APIs. Opaque to you.
-- **ID token** – A JWT with identity claims about the user. Use it to personalize UI, not to call APIs.
+```tsx
+// app/oauth/authorize/route.ts
+export async function GET(request: NextRequest) {
+  const params = request.nextUrl.searchParams
+  const client = await findClient(params.get('client_id'))
 
-Never trust an ID token alone for authorization; check scopes against the resource server instead.
+  assertRedirectUri(client, params.get('redirect_uri'))
+  assertScope(client, params.get('scope'))
+  requirePKCE(params)
 
-## Practical guardrails
+  const session = await requireLogin(request)
+  if (!session.consentedTo(client.id, params.get('scope'))) {
+    return renderConsentScreen({ client, scope: params.get('scope') })
+  }
 
-- **Treat tokens like passwords.** Keep them server-side, encrypt at rest, and scope your database access.
-- **Know your scopes.** Request the least privilege (read vs. read/write) and document why each scope exists.
-- **Test with real providers.** Sandbox environments (Google, Microsoft, GitHub) behave slightly differently. Script the full flow so you can rerun it after configuration changes.
-- **Plan revocation UX.** Users should see which apps are connected and revoke with one click. Your app should handle revoked refresh tokens gracefully.
+  const authorization = await createAuthorization({
+    userId: session.userId,
+    clientId: client.id,
+    scope: params.get('scope')!.split(' '),
+    codeChallenge: params.get('code_challenge')!,
+    method: params.get('code_challenge_method')!,
+  })
 
-OAuth can feel like ceremony until you see the shape. Once you understand the cast, the code exchange,
-and the difference between access and refresh tokens, you can plug any provider into your app with confidence—
-and without asking for anyone’s password.
+  const redirectUri = buildRedirectUri({
+    base: params.get('redirect_uri')!,
+    code: authorization.code,
+    state: params.get('state'),
+  })
+
+  return NextResponse.redirect(redirectUri)
+}
+```
+
+Persist `code_challenge` and `code_challenge_method` so you can verify PKCE during the token exchange.
+
+## Step 4: `/oauth/token` — exchange code for tokens
+
+This handler is the workhorse. It must:
+
+- Authenticate the client (basic auth header or form fields).
+- Validate the authorization code, PKCE verifier, and expiration window.
+- Issue an access token (short expiry) and a refresh token (longer expiry).
+- Invalidate the authorization code so it can’t be reused.
+
+```ts
+// app/oauth/token/route.ts
+export async function POST(request: NextRequest) {
+  const body = await request.formData()
+  const { client, authCode } = await authenticateTokenRequest(body)
+
+  verifyPKCE({
+    codeChallenge: authCode.codeChallenge,
+    verifier: body.get('code_verifier') as string,
+  })
+
+  const tokens = await issueTokens({
+    userId: authCode.userId,
+    clientId: client.id,
+    scope: authCode.scope,
+  })
+
+  await markAuthorizationAsUsed(authCode.id)
+
+  return NextResponse.json({
+    token_type: 'Bearer',
+    access_token: tokens.accessToken.value,
+    expires_in: tokens.accessToken.expiresInSeconds,
+    refresh_token: tokens.refreshToken.value,
+    scope: tokens.scope.join(' '),
+  })
+}
+```
+
+Access tokens can be JWTs signed with `HS256` or opaque strings stored server-side. Either way, include the
+user ID, client ID, scope, and expiry.
+
+## Step 5: `/api/user-message` — the protected resource
+
+The resource server logic runs like any authenticated API route: check the Bearer token, make sure it contains
+`message.read`, and fetch the message.
+
+```ts
+// app/api/user-message/route.ts
+export async function GET(request: NextRequest) {
+  const token = extractBearerToken(request.headers.get('authorization'))
+  const payload = await verifyAccessToken(token)
+
+  assertScope(payload, 'message.read')
+
+  const message = await db.message.findUnique({
+    where: { userId: payload.userId },
+  })
+
+  if (!message) {
+    return NextResponse.json({ error: 'not_found' }, { status: 404 })
+  }
+
+  return NextResponse.json({
+    body: message.body,
+    updatedAt: message.updatedAt.toISOString(),
+  })
+}
+```
+
+Token failures return `401` with a `WWW-Authenticate` header so the client knows to refresh.
+
+## Step 6: Scaffold `oauth-third-party`
+
+Spin up the consumer app right next to the main project:
+
+```bash
+cd ~/sandbox
+npx create-next-app@latest oauth-third-party --ts --app --use-pnpm
+```
+
+Set up environment variables:
+
+```
+VOZ_CLIENT_ID=sandbox-third-party
+VOZ_CLIENT_SECRET=super-long-random-string
+VOZ_OAUTH_BASE_URL=http://localhost:3000
+NEXTAUTH_SECRET=another-long-string
+```
+
+We’ll use a simple route handler–based session. No need for NextAuth; it’s educational to see the primitives.
+
+## Step 7: Kick off the authorize redirect
+
+The home page offers a button that builds the OAuth URL. Generate PKCE + state in the browser, stash them
+in `localStorage` (or encrypted cookies), and redirect.
+
+```tsx
+'use client'
+
+export function ConnectButton() {
+  const handleClick = async () => {
+    const { verifier, challenge } = await createPkcePair()
+    const state = crypto.randomUUID()
+
+    sessionStorage.setItem('pkce_verifier', verifier)
+    sessionStorage.setItem('oauth_state', state)
+
+    const authorizeUrl = new URL('/oauth/authorize', process.env.NEXT_PUBLIC_VOZ_OAUTH_BASE_URL)
+    authorizeUrl.searchParams.set('client_id', process.env.NEXT_PUBLIC_VOZ_CLIENT_ID!)
+    authorizeUrl.searchParams.set('redirect_uri', `${window.location.origin}/api/auth/callback`)
+    authorizeUrl.searchParams.set('response_type', 'code')
+    authorizeUrl.searchParams.set('scope', 'message.read')
+    authorizeUrl.searchParams.set('state', state)
+    authorizeUrl.searchParams.set('code_challenge', challenge)
+    authorizeUrl.searchParams.set('code_challenge_method', 'S256')
+
+    window.location.href = authorizeUrl.toString()
+  }
+
+  return <button onClick={handleClick}>Connect voz.dev</button>
+}
+```
+
+Expose `NEXT_PUBLIC_VOZ_*` variants of the env variables for client-side consumption.
+
+## Step 8: Handle `/api/auth/callback` in oauth-third-party
+
+Once the user lands back with `?code=...`, trade it for tokens on the server.
+
+```ts
+// app/api/auth/callback/route.ts
+export async function GET(request: NextRequest) {
+  const params = request.nextUrl.searchParams
+  assertState(params.get('state'))
+
+  const tokenResponse = await fetch(`${process.env.VOZ_OAUTH_BASE_URL}/oauth/token`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      Authorization: basicAuth(process.env.VOZ_CLIENT_ID!, process.env.VOZ_CLIENT_SECRET!),
+    },
+    body: new URLSearchParams({
+      grant_type: 'authorization_code',
+      code: params.get('code')!,
+      redirect_uri: `${request.nextUrl.origin}/api/auth/callback`,
+      code_verifier: readVerifierFromSession(request),
+    }),
+  })
+
+  const tokens = await tokenResponse.json()
+  await persistSessionCookie({
+    accessToken: tokens.access_token,
+    refreshToken: tokens.refresh_token,
+    expiresAt: Date.now() + tokens.expires_in * 1000,
+  })
+
+  return NextResponse.redirect(new URL('/dashboard', request.url))
+}
+```
+
+Persist the verifier somewhere the server can read (signed cookie, encrypted storage). After success, clean it up.
+
+## Step 9: Display the message
+
+The dashboard fetches from an internal API route that proxies the access token to voz.dev. Refresh when needed.
+
+```ts
+// app/api/message/route.ts
+export async function GET() {
+  const session = await readSessionCookie()
+  const response = await fetch(`${process.env.VOZ_OAUTH_BASE_URL}/api/user-message`, {
+    headers: { Authorization: `Bearer ${session.accessToken}` },
+  })
+
+  if (response.status === 401) {
+    const refreshed = await refreshSession(session.refreshToken)
+    return NextResponse.json(refreshed.message)
+  }
+
+  return NextResponse.json(await response.json())
+}
+```
+
+In `/dashboard/page.tsx`, call that handler via `fetch('/api/message', { cache: 'no-store' })` inside `getMessage()`
+and render optimistic UI states. Remember to show helpful copy if the user hasn’t written a message yet.
+
+## Step 10: Local testing loop
+
+1. `pnpm dev` in `~/git/website` (voz.dev).
+2. `pnpm dev --port 4000` in `~/sandbox/oauth-third-party`.
+3. Create a user on voz.dev and add a message.
+4. Visit `http://localhost:4000`, click “Connect voz.dev,” sign in, and consent.
+5. Watch the network tab: the authorize redirect, token exchange, and message fetch should all succeed.
+6. Shorten the access token lifetime in development to test automatic refresh.
+
+Keep SQLite/Prisma migrations in sync across both projects with `pnpm prisma migrate dev`.
+
+## Hardening for production
+
+- **Token storage** — Store refresh tokens hashed, and rotate them on every use. Invalidate the whole chain if one leaks.
+- **Revocation endpoint** — Support `POST /oauth/revoke` so users can disconnect clients.
+- **Scopes & defaults** — Default to the least powerful scope. Expand later for write access or profile reads.
+- **Logging** — Log grants, denials, and token exchanges for audit trails. Mask personally identifiable info.
+- **Consent UX** — Surface which redirect domain is asking for access, and how often it can refresh tokens.
+- **Monitoring** — Add alarms for suspicious refresh activity (e.g. repeated failures, access from new geo/IP pairs).
+
+## Putting it together
+
+By the end of this walkthrough you have:
+
+- voz.dev acting as a first-party OAuth provider with authorization, token, and resource endpoints.
+- A third-party Next.js client that uses PKCE + refresh tokens to read a user’s message.
+- Database scaffolding to track clients, codes, tokens, and user consent.
+
+Implementation is “just” wiring up the handlers, but the blueprint above keeps you from forgetting the
+important guardrails. When the time comes to ship, grab screenshots of the consent screen and run through the
+local test loop again—those artifacts make the finished blog post even punchier.
