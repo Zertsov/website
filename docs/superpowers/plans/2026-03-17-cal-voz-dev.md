@@ -135,7 +135,7 @@ Accept defaults. This gives us the base Next.js 15 + Tailwind + TypeScript + App
 
 ```bash
 cd ~/git/cal
-pnpm add drizzle-orm better-sqlite3 ulid recharts framer-motion
+pnpm add drizzle-orm better-sqlite3 ulid recharts framer-motion lucide-react
 pnpm add -D drizzle-kit @types/better-sqlite3 vitest @vitejs/plugin-react
 ```
 
@@ -536,7 +536,10 @@ import { ulid } from 'ulid'
 import * as schema from './schema'
 import path from 'path'
 import fs from 'fs'
+import { fileURLToPath } from 'url'
 
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 const dbPath = path.join(__dirname, 'cal.db')
 
 // Remove existing db for clean seed
@@ -1645,6 +1648,18 @@ Create `app/api/tasks/[id]/route.ts`:
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/db'
 import { updateTask, deleteTask } from '@/lib/queries/tasks'
+import { tasks } from '@/db/schema'
+import { eq } from 'drizzle-orm'
+
+export async function GET(
+  _request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params
+  const task = db.select().from(tasks).where(eq(tasks.id, id)).get()
+  if (!task) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+  return NextResponse.json(task)
+}
 
 export async function PATCH(
   request: NextRequest,
@@ -2296,11 +2311,8 @@ Modify `app/layout.tsx`:
 
 ```tsx
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
 import './globals.css'
 import { NavBar } from '@/components/nav-bar'
-
-const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'cal.voz.dev',
@@ -2314,7 +2326,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="dark">
-      <body className={`${inter.className} bg-zinc-950 text-zinc-100 min-h-screen`}>
+      <body className="font-sans bg-zinc-950 text-zinc-100 min-h-screen">
         <NavBar />
         <main className="max-w-7xl mx-auto px-4 py-6">
           {children}
@@ -3146,7 +3158,7 @@ export function WeekStrip({ selectedDate, onDateSelect }: WeekStripProps) {
         for (const p of projects) colors[p.id] = p.color
         setProjectColors(colors)
       })
-  }, [weekDates[0]])
+  }, [selectedDate])
 
   return (
     <div className="bg-zinc-900 rounded-lg p-3 flex gap-1">
@@ -3272,7 +3284,7 @@ Update `app/page.tsx`:
 ```tsx
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { WeekStrip } from '@/components/week-strip'
 import { QuickStats } from '@/components/quick-stats'
 import { TaskList } from '@/components/task-list'
@@ -3283,6 +3295,19 @@ export default function DashboardPage() {
   const [selectedDate, setSelectedDate] = useState(
     new Date().toISOString().split('T')[0]
   )
+
+  // Listen for arrow key navigation from keyboard shortcuts
+  useEffect(() => {
+    function handleNavigateDay(e: CustomEvent<number>) {
+      setSelectedDate((prev) => {
+        const d = new Date(prev + 'T00:00:00')
+        d.setDate(d.getDate() + e.detail)
+        return d.toISOString().split('T')[0]
+      })
+    }
+    window.addEventListener('navigate-day', handleNavigateDay as EventListener)
+    return () => window.removeEventListener('navigate-day', handleNavigateDay as EventListener)
+  }, [])
 
   return (
     <div className="space-y-4">
@@ -3421,15 +3446,12 @@ export function TaskDetail({ taskId, onUpdate }: TaskDetailProps) {
   const [description, setDescription] = useState('')
 
   useEffect(() => {
-    fetch(`/api/tasks?date=2000-01-01&status=pending,in_progress,completed,abandoned`)
+    fetch(`/api/tasks/${taskId}`)
       .then((res) => res.json())
-      .then((tasks: TaskData[]) => {
-        const found = tasks.find((t) => t.id === taskId)
-        if (found) {
-          setTask(found)
-          setTitle(found.title)
-          setDescription(found.description ?? '')
-        }
+      .then((data: TaskData) => {
+        setTask(data)
+        setTitle(data.title)
+        setDescription(data.description ?? '')
       })
   }, [taskId])
 
@@ -3886,6 +3908,28 @@ export function ProjectDetail({ projectId }: ProjectDetailProps) {
           }}
         />
       </div>
+      {/* Mini-analytics */}
+      <div className="grid grid-cols-2 gap-2 mt-4">
+        <div className="bg-zinc-800/50 rounded-md p-3 text-center">
+          <div className="text-lg font-semibold text-teal-400">{progress}%</div>
+          <div className="text-[10px] text-zinc-500">Completion rate</div>
+        </div>
+        <div className="bg-zinc-800/50 rounded-md p-3 text-center">
+          <div className="text-lg font-semibold text-zinc-300">
+            {tasks.filter((t) => t.completedAt).length > 0
+              ? `${Math.round(
+                  tasks
+                    .filter((t) => t.completedAt)
+                    .reduce(
+                      (sum, t) => sum + (t.completedAt - t.createdAt) / 86400000,
+                      0
+                    ) / tasks.filter((t) => t.completedAt).length
+                )}d`
+              : '—'}
+          </div>
+          <div className="text-[10px] text-zinc-500">Avg task duration</div>
+        </div>
+      </div>
       <div className="space-y-1.5 mt-4">
         {tasks.map((task) => (
           <div
@@ -4057,17 +4101,57 @@ export default function ArchivePage() {
   })
   const [to, setTo] = useState(() => new Date().toISOString().split('T')[0])
   const [tasks, setTasks] = useState<ArchivedTask[]>([])
+  const [projects, setProjects] = useState<{ id: string; name: string; color: string }[]>([])
+  const [filterProjectId, setFilterProjectId] = useState<string>('')
+  const [filterStatus, setFilterStatus] = useState<string>('completed,abandoned')
 
   useEffect(() => {
-    fetch(`/api/tasks?status=completed,abandoned`)
+    fetch('/api/projects').then((r) => r.json()).then(setProjects)
+  }, [])
+
+  useEffect(() => {
+    const params = new URLSearchParams({ status: filterStatus })
+    if (filterProjectId) params.set('project_id', filterProjectId)
+    fetch(`/api/tasks?${params}`)
       .then((r) => r.json())
-      .then(setTasks)
-  }, [from, to])
+      .then((allTasks: ArchivedTask[]) => {
+        // Client-side date range filter (completedAt/abandonedAt within range)
+        const fromMs = new Date(from).getTime()
+        const toMs = new Date(to + 'T23:59:59').getTime()
+        setTasks(
+          allTasks.filter((t) => {
+            const endMs = t.completedAt ?? t.abandonedAt ?? 0
+            return endMs >= fromMs && endMs <= toMs
+          })
+        )
+      })
+  }, [from, to, filterProjectId, filterStatus])
 
   return (
     <div className="max-w-2xl mx-auto space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-2">
         <h1 className="text-lg font-medium">Archive</h1>
+        <div className="flex items-center gap-2">
+          <select
+            value={filterStatus}
+            onChange={(e) => setFilterStatus(e.target.value)}
+            className="bg-zinc-800 border border-zinc-700 rounded-md px-2 py-1 text-zinc-300 text-xs"
+          >
+            <option value="completed,abandoned">All</option>
+            <option value="completed">Completed</option>
+            <option value="abandoned">Abandoned</option>
+          </select>
+          <select
+            value={filterProjectId}
+            onChange={(e) => setFilterProjectId(e.target.value)}
+            className="bg-zinc-800 border border-zinc-700 rounded-md px-2 py-1 text-zinc-300 text-xs"
+          >
+            <option value="">All projects</option>
+            {projects.map((p) => (
+              <option key={p.id} value={p.id}>{p.name}</option>
+            ))}
+          </select>
+        </div>
         <DateRangeFilter
           from={from}
           to={to}
@@ -4225,7 +4309,27 @@ export default function AnalyticsPage() {
                 </BarChart>
               </ResponsiveContainer>
             </div>
-            <div className="flex gap-6 text-sm">
+            {/* Busiest day of week heatmap */}
+            <div className="flex gap-1 mt-4">
+              {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((label, i) => {
+                const dayData = productivity.busiestDay.find((d: any) => d.dayOfWeek === i)
+                const count = dayData?.count ?? 0
+                const maxCount = Math.max(...productivity.busiestDay.map((d: any) => d.count), 1)
+                const opacity = count > 0 ? 0.2 + (count / maxCount) * 0.8 : 0.05
+                return (
+                  <div key={label} className="flex-1 text-center">
+                    <div
+                      className="aspect-square rounded-md mb-1 flex items-center justify-center text-xs text-zinc-300"
+                      style={{ backgroundColor: `rgba(20, 184, 166, ${opacity})` }}
+                    >
+                      {count > 0 ? count : ''}
+                    </div>
+                    <div className="text-[9px] text-zinc-500">{label}</div>
+                  </div>
+                )
+              })}
+            </div>
+            <div className="flex gap-6 text-sm mt-4">
               <div>
                 <span className="text-zinc-500">Max streak: </span>
                 <span className="text-teal-400 font-medium">
@@ -4424,6 +4528,16 @@ export function KeyboardShortcuts() {
               '[placeholder="Add a follow-up..."]'
             )
             ?.focus()
+          e.preventDefault()
+          break
+        case 'ArrowLeft':
+          // Navigate to previous day (dispatches custom event for dashboard/calendar)
+          window.dispatchEvent(new CustomEvent('navigate-day', { detail: -1 }))
+          e.preventDefault()
+          break
+        case 'ArrowRight':
+          // Navigate to next day
+          window.dispatchEvent(new CustomEvent('navigate-day', { detail: 1 }))
           e.preventDefault()
           break
       }
