@@ -36,11 +36,11 @@
   box-shadow:
     inset 0 0 0 1px rgb(255 255 255 / 0.04),
     0 28px 80px rgb(7 11 16 / 0.46);
-  touch-action: none;
+  touch-action: pan-y;
 }
 
 .stage::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   background:
@@ -91,6 +91,14 @@
 
 .panelHeader {
   margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+
+.panelActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto;
 }
 
 .eyebrow {
@@ -121,6 +129,47 @@
   font-size: 0.78rem;
   text-transform: uppercase;
   letter-spacing: 0.12em;
+}
+
+.copyButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 34px;
+  padding: 0 12px;
+  border: 1px solid rgb(var(--panel-border) / 0.24);
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.04);
+  color: rgb(var(--text));
+  font: inherit;
+  font-size: 0.8rem;
+  white-space: nowrap;
+  transition:
+    background 140ms ease,
+    border-color 140ms ease,
+    color 140ms ease;
+}
+
+.copyButton:hover {
+  border-color: rgb(var(--panel-border) / 0.38);
+  background: rgb(255 255 255 / 0.08);
+}
+
+.copyButton[data-state="copied"] {
+  border-color: rgb(var(--accent-green) / 0.5);
+  background: rgb(var(--accent-green) / 0.14);
+  color: rgb(221 255 246);
+}
+
+.copyButton[data-state="error"] {
+  border-color: rgb(var(--accent-amber) / 0.5);
+  background: rgb(var(--accent-amber) / 0.16);
+  color: rgb(255 225 191);
+}
+
+.copyButton:focus-visible {
+  outline: 2px solid rgb(160 247 221 / 0.78);
+  outline-offset: 3px;
 }
 
 .terminal {
@@ -163,7 +212,8 @@
 .rowNumber {
   flex: 0 0 26px;
   color: rgb(var(--muted) / 0.62);
-  font-family: 'IBM Plex Mono', 'SFMono-Regular', 'SF Mono', Consolas, monospace;
+  font-family:
+    "IBM Plex Mono", "SFMono-Regular", "SF Mono", Consolas, monospace;
   font-size: 0.75rem;
 }
 
@@ -171,7 +221,8 @@
   flex: 1;
   min-width: 0;
   color: rgb(var(--text));
-  font-family: 'IBM Plex Mono', 'SFMono-Regular', 'SF Mono', Consolas, monospace;
+  font-family:
+    "IBM Plex Mono", "SFMono-Regular", "SF Mono", Consolas, monospace;
   font-size: 0.88rem;
   line-height: 1.7;
   white-space: nowrap;
@@ -221,7 +272,7 @@
 .splitBeam::before,
 .splitGlow::before,
 .splitNoise::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   bottom: 0;
@@ -294,6 +345,8 @@
     0 18px 40px rgb(0 0 0 / 0.38);
   transform: translate(-50%, -50%);
   cursor: ew-resize;
+  touch-action: none;
+  user-select: none;
 }
 
 .dragHandle span {
@@ -322,6 +375,12 @@
   .footer {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .panelActions {
+    width: 100%;
+    justify-content: space-between;
+    margin-left: 0;
   }
 
   .row {
