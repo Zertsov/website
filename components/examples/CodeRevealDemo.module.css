@@ -1,378 +1,398 @@
 .frame {
-	width: 100%;
+  width: 100%;
 }
 
 .stage {
-	--split: 55%;
-	--bg-left: 10 16 31;
-	--bg-right: 19 14 11;
-	--panel: 16 20 30;
-	--panel-border: 124 145 192;
-	--text: 244 247 252;
-	--muted: 156 165 186;
-	--accent-blue: 109 129 255;
-	--accent-orange: 255 154 77;
-	position: relative;
-	min-height: min(72vh, 760px);
-	overflow: hidden;
-	border: 1px solid rgb(63 72 88 / 0.7);
-	border-radius: 32px;
-	background:
-		radial-gradient(
-			circle at 18% 50%,
-			rgb(var(--accent-blue) / 0.18),
-			transparent 35%
-		),
-		radial-gradient(
-			circle at 84% 50%,
-			rgb(var(--accent-orange) / 0.14),
-			transparent 34%
-		),
-		linear-gradient(
-			90deg,
-			rgb(var(--bg-left) / 0.98),
-			rgb(var(--bg-right) / 0.98)
-		);
-	box-shadow:
-		0 0 0 1px rgb(255 255 255 / 0.04) inset,
-		0 28px 80px rgb(10 12 18 / 0.42);
-	touch-action: none;
+  --split: 55%;
+  --bg-left: 10 16 31;
+  --bg-right: 19 14 11;
+  --panel: 16 20 30;
+  --panel-border: 124 145 192;
+  --text: 244 247 252;
+  --muted: 156 165 186;
+  --accent-blue: 109 129 255;
+  --accent-orange: 255 154 77;
+  position: relative;
+  min-height: min(72vh, 760px);
+  overflow: hidden;
+  border: 1px solid rgb(63 72 88 / 0.7);
+  border-radius: 32px;
+  background:
+    radial-gradient(
+      circle at 18% 50%,
+      rgb(var(--accent-blue) / 0.18),
+      transparent 35%
+    ),
+    radial-gradient(
+      circle at 84% 50%,
+      rgb(var(--accent-orange) / 0.14),
+      transparent 34%
+    ),
+    linear-gradient(
+      90deg,
+      rgb(var(--bg-left) / 0.98),
+      rgb(var(--bg-right) / 0.98)
+    );
+  box-shadow:
+    0 0 0 1px rgb(255 255 255 / 0.04) inset,
+    0 28px 80px rgb(10 12 18 / 0.42);
+  touch-action: none;
 }
 
 .stage::before {
-	content: "";
-	position: absolute;
-	inset: 0;
-	background-image: radial-gradient(rgb(255 255 255 / 0.05) 1px, transparent 0);
-	background-size: 10px 10px;
-	opacity: 0.7;
-	pointer-events: none;
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgb(255 255 255 / 0.05) 1px, transparent 0);
+  background-size: 10px 10px;
+  opacity: 0.7;
+  pointer-events: none;
 }
 
 .pane {
-	position: absolute;
-	inset: 0;
-	display: grid;
-	place-items: center;
-	padding: clamp(24px, 6vw, 72px);
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: clamp(24px, 6vw, 72px);
 }
 
 .livePane {
-	clip-path: inset(0 calc(100% - var(--split)) 0 0 round 32px);
+  clip-path: inset(0 calc(100% - var(--split)) 0 0 round 32px);
 }
 
 .codePane {
-	clip-path: inset(0 0 0 var(--split) round 32px);
+  clip-path: inset(0 0 0 var(--split) round 32px);
 }
 
 .ambientRing {
-	position: absolute;
-	width: 72vmin;
-	aspect-ratio: 1;
-	border-radius: 999px;
-	filter: blur(8px);
-	opacity: 0.3;
+  position: absolute;
+  width: 72vmin;
+  aspect-ratio: 1;
+  border-radius: 999px;
+  filter: blur(8px);
+  opacity: 0.3;
 }
 
 .ambientRingA {
-	inset: auto auto 12% -12%;
-	border: 1px solid rgb(var(--accent-blue) / 0.12);
-	box-shadow: 0 0 120px rgb(var(--accent-blue) / 0.08);
+  inset: auto auto 12% -12%;
+  border: 1px solid rgb(var(--accent-blue) / 0.12);
+  box-shadow: 0 0 120px rgb(var(--accent-blue) / 0.08);
 }
 
 .ambientRingB {
-	inset: -18% -18% auto auto;
-	border: 1px solid rgb(var(--accent-orange) / 0.1);
-	box-shadow: 0 0 120px rgb(var(--accent-orange) / 0.08);
+  inset: -18% -18% auto auto;
+  border: 1px solid rgb(var(--accent-orange) / 0.1);
+  box-shadow: 0 0 120px rgb(var(--accent-orange) / 0.08);
 }
 
 .componentCard,
 .codePanel {
-	position: relative;
-	border: 1px solid rgb(var(--panel-border) / 0.28);
-	border-radius: 22px;
-	background: rgb(var(--panel) / 0.82);
-	-webkit-backdrop-filter: blur(24px);
-	backdrop-filter: blur(24px);
+  position: relative;
+  border: 1px solid rgb(var(--panel-border) / 0.28);
+  border-radius: 22px;
+  background: rgb(var(--panel) / 0.82);
+  -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(24px);
 }
 
 .componentCard {
-	width: min(100%, 360px);
-	padding: 18px;
-	box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.04);
+  width: min(100%, 360px);
+  padding: 18px;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.04);
 }
 
 .cardOrb {
-	position: absolute;
-	inset: auto auto -18px -18px;
-	width: 88px;
-	height: 88px;
-	border-radius: 999px;
-	background: radial-gradient(
-		circle,
-		rgb(var(--accent-blue) / 0.3),
-		transparent 72%
-	);
-	filter: blur(10px);
-	pointer-events: none;
+  position: absolute;
+  inset: auto auto -18px -18px;
+  width: 88px;
+  height: 88px;
+  border-radius: 999px;
+  background: radial-gradient(
+    circle,
+    rgb(var(--accent-blue) / 0.3),
+    transparent 72%
+  );
+  filter: blur(10px);
+  pointer-events: none;
 }
 
 .cardHeader,
 .codeHeader {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
 }
 
 .cardHeader {
-	margin-bottom: 18px;
+  margin-bottom: 18px;
 }
 
 .statusPill,
 .metaChip {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	min-height: 28px;
-	padding: 0 12px;
-	border-radius: 999px;
-	border: 1px solid rgb(var(--panel-border) / 0.3);
-	background: rgb(255 255 255 / 0.03);
-	color: rgb(var(--text));
-	font-size: 0.82rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 28px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid rgb(var(--panel-border) / 0.3);
+  background: rgb(255 255 255 / 0.03);
+  color: rgb(var(--text));
+  font-size: 0.82rem;
 }
 
 .mutedLabel {
-	color: rgb(var(--muted));
-	font-size: 0.88rem;
+  color: rgb(var(--muted));
+  font-size: 0.88rem;
 }
 
 .componentBody {
-	display: grid;
-	gap: 14px;
+  display: grid;
+  gap: 14px;
 }
 
 .field {
-	display: grid;
-	gap: 8px;
-	color: rgb(var(--muted));
-	font-size: 0.82rem;
+  display: grid;
+  gap: 8px;
+  color: rgb(var(--muted));
+  font-size: 0.82rem;
 }
 
 .field input,
 .selectField {
-	width: 100%;
-	padding: 12px 14px;
-	border: 1px solid rgb(var(--panel-border) / 0.22);
-	border-radius: 12px;
-	background: rgb(8 11 19 / 0.65);
-	color: rgb(var(--text));
-	font: inherit;
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid rgb(var(--panel-border) / 0.22);
+  border-radius: 12px;
+  background: rgb(8 11 19 / 0.65);
+  color: rgb(var(--text));
+  font: inherit;
 }
 
 .selectField {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .caret {
-	color: rgb(194 201 224);
-	font-size: 0.9rem;
+  color: rgb(194 201 224);
+  font-size: 0.9rem;
 }
 
 .metaRow {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .primaryAction {
-	border: 0;
-	border-radius: 12px;
-	padding: 14px 18px;
-	background: linear-gradient(
-		90deg,
-		rgb(102 118 244),
-		rgb(117 135 255) 58%,
-		rgb(133 115 255)
-	);
-	color: white;
-	font: inherit;
-	font-weight: 700;
-	box-shadow: 0 14px 30px rgb(var(--accent-blue) / 0.28);
+  border: 0;
+  border-radius: 12px;
+  padding: 14px 18px;
+  background: linear-gradient(
+    90deg,
+    rgb(102 118 244),
+    rgb(117 135 255) 58%,
+    rgb(133 115 255)
+  );
+  color: white;
+  font: inherit;
+  font-weight: 700;
+  box-shadow: 0 14px 30px rgb(var(--accent-blue) / 0.28);
 }
 
 .codePanel {
-	width: min(100%, 540px);
-	overflow: hidden;
-	background:
-		linear-gradient(180deg, rgb(14 16 24 / 0.96), rgb(10 12 18 / 0.96)),
-		rgb(14 16 24 / 0.96);
+  width: min(100%, 540px);
+  overflow: hidden;
+  background:
+    linear-gradient(180deg, rgb(14 16 24 / 0.96), rgb(10 12 18 / 0.96)),
+    rgb(14 16 24 / 0.96);
 }
 
 .codeHeader {
-	padding: 14px 18px;
-	border-bottom: 1px solid rgb(124 145 192 / 0.12);
-	color: rgb(230 234 245);
-	font-size: 0.84rem;
+  padding: 14px 18px;
+  border-bottom: 1px solid rgb(124 145 192 / 0.12);
+  color: rgb(230 234 245);
+  font-size: 0.84rem;
 }
 
 .codeDotRow {
-	display: flex;
-	gap: 7px;
+  display: flex;
+  gap: 7px;
 }
 
 .codeDotRow i {
-	display: block;
-	width: 8px;
-	height: 8px;
-	border-radius: 999px;
-	background: rgb(255 255 255 / 0.18);
+  display: block;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.18);
 }
 
 .codeBlock {
-	margin: 0;
-	padding: 18px 20px 22px;
-	overflow: auto;
-	color: rgb(232 235 248);
-	font-size: 0.86rem;
-	line-height: 1.72;
+  margin: 0;
+  padding: 18px 20px 22px;
+  overflow: auto;
+  color: rgb(232 235 248);
+  font-size: 0.86rem;
+  line-height: 1.72;
 }
 
 .codeLine {
-	display: block;
-	white-space: pre;
+  display: block;
+  white-space: pre;
+}
+
+.tokenKeyword {
+  color: rgb(255 168 112);
+}
+
+.tokenFn {
+  color: rgb(140 176 255);
+}
+
+.tokenTag {
+  color: rgb(143 230 212);
+}
+
+.tokenAttr {
+  color: rgb(255 199 132);
+}
+
+.tokenString {
+  color: rgb(194 178 255);
 }
 
 .splitEffect {
-	position: absolute;
-	top: 0;
-	bottom: 0;
-	left: var(--split);
-	width: 92px;
-	transform: translateX(-50%);
-	pointer-events: none;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--split);
+  width: 92px;
+  transform: translateX(-50%);
+  pointer-events: none;
 }
 
 .splitCore,
 .splitGlow,
 .splitRipple {
-	position: absolute;
-	inset: 0;
+  position: absolute;
+  inset: 0;
 }
 
 .splitCore::before,
 .splitGlow::before,
 .splitRipple::before {
-	content: "";
-	position: absolute;
-	top: 0;
-	bottom: 0;
-	left: 50%;
-	transform: translateX(-50%);
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .splitCore::before {
-	width: 2px;
-	background: linear-gradient(
-		180deg,
-		rgb(255 255 255 / 0.28),
-		rgb(255 255 255) 18%,
-		rgb(255 255 255 / 0.4)
-	);
-	box-shadow:
-		0 0 14px rgb(255 255 255 / 0.55),
-		0 0 24px rgb(var(--accent-blue) / 0.45),
-		0 0 40px rgb(var(--accent-orange) / 0.28);
+  width: 2px;
+  background: linear-gradient(
+    180deg,
+    rgb(255 255 255 / 0.28),
+    rgb(255 255 255) 18%,
+    rgb(255 255 255 / 0.4)
+  );
+  box-shadow:
+    0 0 14px rgb(255 255 255 / 0.55),
+    0 0 24px rgb(var(--accent-blue) / 0.45),
+    0 0 40px rgb(var(--accent-orange) / 0.28);
 }
 
 .splitGlow {
-	background:
-		linear-gradient(
-			90deg,
-			rgb(var(--accent-blue) / 0.34),
-			rgb(var(--accent-blue) / 0.02) 42%,
-			transparent 50%,
-			rgb(var(--accent-orange) / 0.02) 58%,
-			rgb(var(--accent-orange) / 0.32)
-		),
-		linear-gradient(
-			180deg,
-			transparent,
-			rgb(255 255 255 / 0.08) 50%,
-			transparent
-		);
-	filter: blur(18px);
-	opacity: 0.95;
+  background:
+    linear-gradient(
+      90deg,
+      rgb(var(--accent-blue) / 0.34),
+      rgb(var(--accent-blue) / 0.02) 42%,
+      transparent 50%,
+      rgb(var(--accent-orange) / 0.02) 58%,
+      rgb(var(--accent-orange) / 0.32)
+    ),
+    linear-gradient(
+      180deg,
+      transparent,
+      rgb(255 255 255 / 0.08) 50%,
+      transparent
+    );
+  filter: blur(18px);
+  opacity: 0.95;
 }
 
 .splitRipple {
-	background: repeating-linear-gradient(
-		90deg,
-		rgb(var(--accent-blue) / 0.18) 0,
-		rgb(var(--accent-blue) / 0.18) 1px,
-		transparent 2px,
-		transparent 5px,
-		rgb(var(--accent-orange) / 0.12) 6px,
-		rgb(var(--accent-orange) / 0.12) 7px,
-		transparent 8px,
-		transparent 12px
-	);
-	mix-blend-mode: screen;
-	opacity: 0.62;
-	filter: blur(1px);
+  background: repeating-linear-gradient(
+    90deg,
+    rgb(var(--accent-blue) / 0.18) 0,
+    rgb(var(--accent-blue) / 0.18) 1px,
+    transparent 2px,
+    transparent 5px,
+    rgb(var(--accent-orange) / 0.12) 6px,
+    rgb(var(--accent-orange) / 0.12) 7px,
+    transparent 8px,
+    transparent 12px
+  );
+  mix-blend-mode: screen;
+  opacity: 0.62;
+  filter: blur(1px);
 }
 
 .dragHandle {
-	position: absolute;
-	top: 50%;
-	left: var(--split);
-	display: grid;
-	gap: 4px;
-	place-items: center;
-	width: 38px;
-	height: 38px;
-	border: 1px solid rgb(232 237 255 / 0.15);
-	border-radius: 999px;
-	background: rgb(11 14 24 / 0.82);
-	box-shadow:
-		0 0 0 6px rgb(255 255 255 / 0.02),
-		0 18px 40px rgb(0 0 0 / 0.42);
-	transform: translate(-50%, -50%);
-	cursor: ew-resize;
+  position: absolute;
+  top: 50%;
+  left: var(--split);
+  display: grid;
+  gap: 4px;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid rgb(232 237 255 / 0.15);
+  border-radius: 999px;
+  background: rgb(11 14 24 / 0.82);
+  box-shadow:
+    0 0 0 6px rgb(255 255 255 / 0.02),
+    0 18px 40px rgb(0 0 0 / 0.42);
+  transform: translate(-50%, -50%);
+  cursor: ew-resize;
 }
 
 .dragHandle span {
-	display: block;
-	width: 11px;
-	height: 2px;
-	border-radius: 999px;
-	background: rgb(235 240 255 / 0.88);
+  display: block;
+  width: 11px;
+  height: 2px;
+  border-radius: 999px;
+  background: rgb(235 240 255 / 0.88);
 }
 
 .dragHandle:focus-visible {
-	outline: 2px solid rgb(175 196 255 / 0.85);
-	outline-offset: 4px;
+  outline: 2px solid rgb(175 196 255 / 0.85);
+  outline-offset: 4px;
 }
 
 @media (max-width: 720px) {
-	.stage {
-		min-height: 620px;
-	}
+  .stage {
+    min-height: 620px;
+  }
 
-	.componentCard,
-	.codePanel {
-		width: 100%;
-	}
+  .componentCard,
+  .codePanel {
+    width: 100%;
+  }
 
-	.codeBlock {
-		font-size: 0.78rem;
-	}
+  .codeBlock {
+    font-size: 0.78rem;
+  }
 
-	.dragHandle {
-		width: 34px;
-		height: 34px;
-	}
+  .dragHandle {
+    width: 34px;
+    height: 34px;
+  }
 }
