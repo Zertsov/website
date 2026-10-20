@@ -91,13 +91,13 @@ function Resume() {
     },
     {
       company: 'Vercel',
-      title: 'Software Engineer',
+      title: 'Senior Software Engineer',
       start: '2023',
       end: '2025',
     },
     {
       company: 'Cloudflare',
-      title: 'Software Engineer',
+      title: 'Senior Software Engineer',
       // TODO: Get a good SVG that fits in the circle
       // logo: cflogo,
       start: '2021',
